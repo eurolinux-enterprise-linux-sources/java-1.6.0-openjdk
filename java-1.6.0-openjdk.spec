@@ -7,10 +7,10 @@
 %define debug 0
 
 
-%define icedteaver 1.13.10
+%define icedteaver 1.13.11
 %define icedteasnapshot %{nil}
-%define openjdkver 38
-%define openjdkdate 20_jan_2016
+%define openjdkver 39
+%define openjdkdate 03_may_2016
 
 %define genurl http://cvs.fedoraproject.org/viewcvs/devel/java-1.6.0-openjdk/
 
@@ -162,7 +162,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{buildver}
-Release: %{icedteaver}.4%{?dist}
+Release: %{icedteaver}.0%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -204,9 +204,7 @@ Patch10:  add-final-location-rpaths.patch
 # This turns off the application of PR2125 by fsg.sh as
 # we do it ourselves ahead of time via generate-rhel-zip.sh
 Patch11:  no_pr2125.patch
-# PR2808, RH1217131: Backport "8076221: Disable RC4 cipher suites"
-Patch12: pr2808.patch
-
+ 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 
@@ -270,8 +268,6 @@ Requires: fontconfig
 Requires: libjpeg = 6b
 # Require /etc/pki/java/cacerts.
 Requires: ca-certificates
-# Require /etc/mime.types
-Requires: mailcap
 # Require jpackage-utils for ant.
 Requires: jpackage-utils >= 1.7.3-1jpp.2
 # Require zoneinfo data provided by tzdata-java subpackage.
@@ -370,7 +366,6 @@ The OpenJDK API documentation.
 # Upstream patch first
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 
 cp %{SOURCE4} .
 
@@ -393,7 +388,7 @@ export CFLAGS="$CFLAGS -mieee"
   --with-abs-install-dir=%{_jvmdir}/%{sdkdir} \
   --with-rhino --with-parallel-jobs=$NUM_PROC --disable-lcms2
 
-make DISTRIBUTION_PATCHES="patches/add-final-location-rpaths.patch patches/openjdk/8076221-pr2808-disable_rc4_cipher_suites.patch patches/openjdk/8078823-disabledalgorithms_fails_intermittently.patch patches/pr2808-fix_disabled_algorithms_test.patch" patch
+make DISTRIBUTION_PATCHES=patches/add-final-location-rpaths.patch patch
 
 patch -l -p0 < %{PATCH3}
 patch -l -p0 < %{PATCH4}
@@ -457,13 +452,6 @@ pushd %{buildoutputdir}/j2sdk-image
     RELATIVE=$(%{abs2rel} %{_sysconfdir}/pki/java \
       %{_jvmdir}/%{jredir}/lib/security)
     ln -sf $RELATIVE/cacerts .
-  popd
-
-  # Install mime.types symlink.
-  pushd $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib
-    RELATIVE=$(%{abs2rel} %{_sysconfdir}/mime.types \
-      %{_jvmdir}/%{jredir}/lib)
-    ln -sf $RELATIVE .
   popd
 
   # Install extension symlinks.
@@ -899,42 +887,33 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
-* Mon Jan 25 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.4
-- Disable RC4 by default.
-- Resolves: rhbz#1217131
+* Wed May 04 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.39-1.13.11.0
+- Update to IcedTea 1.13.11 & OpenJDK 6 b39.
+- Resolves: rhbz#1325430
 
-* Thu Jan 21 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.3
-- Fix duplicate mime.types in new symlink.
-- Resolves: rhbz#1195203
-
-* Thu Jan 21 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.2
-- Add a symlink to /etc/mime.types in jre/lib.
-- Resolves: rhbz#1195203
-
-* Thu Jan 21 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.1
+* Thu Jan 21 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.0
 - Update to IcedTea 1.13.10 & OpenJDK 6 b38.
-- Resolves: rhbz#1295774
+- Resolves: rhbz#1295773
 
-* Wed Nov 11 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.5
+* Wed Nov 11 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.4
 - Update with new IcedTea & b37 tarballs, including fix for appletviewer regression.
-- Resolves: rhbz#1271928
+- Resolves: rhbz#1271927
 
-* Tue Nov 10 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.4
+* Tue Nov 10 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.3
 - Update with new IcedTea & b37 tarballs, including more Kerberos fixes for TCK regression.
-- Resolves: rhbz#1271928
+- Resolves: rhbz#1271927
 
-* Wed Nov 04 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.3
+* Wed Nov 04 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.2
 - Update with new IcedTea & b37 tarballs, including Kerberos fixes for TCK regression.
-- Resolves: rhbz#1271928
+- Resolves: rhbz#1271927
 
-* Mon Nov 02 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.2
+* Mon Nov 02 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.1
 - Update with newer tarball, including 6763122 fix for TCK regression.
-- Use release + 1 to avoid having a lower version than the 6.7 version.
-- Resolves: rhbz#1271928
+- Resolves: rhbz#1271927
 
 * Tue Oct 27 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.0
 - Update to IcedTea 1.13.9
-- Resolves: rhbz#1271928
+- Resolves: rhbz#1271927
 
 * Tue Jul 28 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.36-1.13.8.1
 - Update tarball to fix TCK regression (PR2565)
