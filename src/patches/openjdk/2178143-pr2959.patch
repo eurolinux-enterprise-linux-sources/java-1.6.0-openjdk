@@ -1,0 +1,54 @@
+# HG changeset patch
+# User minqi
+# Date 1464805886 -3600
+#      Wed Jun 01 19:31:26 2016 +0100
+# Node ID a136b8a1ad7a00a0d7509f1a5a8cb6d0e509af76
+# Parent  2d8e12787f80ffffa0e48927efe5af13c6a68a08
+2178143, PR2959: JVM crashes if the number of bound CPUs changed during runtime
+Summary: Supply a new flag -XX:+AssumeMP to workaround the problem. With the flag is turned on, assume VM run on MP platform so is_MP() will return true that sync calls will not skip away.
+Reviewed-by: dholmes, acorn, dcubed, jmasa
+Contributed-by: yumin.qi@oracle.com
+
+diff --git a/src/share/vm/runtime/arguments.cpp b/src/share/vm/runtime/arguments.cpp
+--- openjdk/hotspot/src/share/vm/runtime/arguments.cpp
++++ openjdk/hotspot/src/share/vm/runtime/arguments.cpp
+@@ -3473,6 +3473,14 @@
+     set_g1_gc_flags();
+   }
+ 
++  if (AssumeMP && !UseSerialGC) {
++    if (FLAG_IS_DEFAULT(ParallelGCThreads) && ParallelGCThreads == 1) {
++      warning("If the number of processors is expected to increase from one, then"
++              " you should configure the number of parallel GC threads appropriately"
++              " using -XX:ParallelGCThreads=N");
++    }
++  }
++
+ #ifdef SERIALGC
+   assert(verify_serial_gc_flags(), "SerialGC unset");
+ #endif // SERIALGC
+diff --git a/src/share/vm/runtime/globals.hpp b/src/share/vm/runtime/globals.hpp
+--- openjdk/hotspot/src/share/vm/runtime/globals.hpp
++++ openjdk/hotspot/src/share/vm/runtime/globals.hpp
+@@ -480,6 +480,9 @@
+   lp64_product(intx, ObjectAlignmentInBytes, 8,                             \
+           "Default object alignment in bytes, 8 is minimum")                \
+                                                                             \
++  product(bool, AssumeMP, false,                                            \
++          "Instruct the VM to assume multiple processors are available")    \
++                                                                            \
+   /* UseMembar is theoretically a temp flag used for memory barrier         \
+    * removal testing.  It was supposed to be removed before FCS but has     \
+    * been re-added (see 6401008) */                                         \
+diff --git a/src/share/vm/runtime/os.hpp b/src/share/vm/runtime/os.hpp
+--- openjdk/hotspot/src/share/vm/runtime/os.hpp
++++ openjdk/hotspot/src/share/vm/runtime/os.hpp
+@@ -198,7 +198,7 @@
+   // Interface for detecting multiprocessor system
+   static inline bool is_MP() {
+     assert(_processor_count > 0, "invalid processor count");
+-    return _processor_count > 1;
++    return _processor_count > 1 || AssumeMP;
+   }
+   static julong available_memory();
+   static julong physical_memory();

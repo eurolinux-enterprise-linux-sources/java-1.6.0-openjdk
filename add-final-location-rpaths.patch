@@ -11,8 +11,8 @@ diff -r b85872bd06da Makefile.am
 --- a/Makefile.am	Thu Apr 09 20:20:00 2015 +0100
 +++ b/Makefile.am	Thu Apr 09 20:41:52 2015 +0100
 @@ -815,7 +815,8 @@
- 	BUILD_GCC=gcc$(GCC_SUFFIX) \
- 	BUILD_CXX=g++$(GCC_SUFFIX) \
+ 	CC=$(CC)$(GCC_SUFFIX) \
+ 	CXX=$(CXX)$(GCC_SUFFIX) \
  	COMPILER_WARNINGS_FATAL="$(WERROR_STATUS)" \
 -	UNLIMITED_CRYPTO="true"
 +	UNLIMITED_CRYPTO="true" \

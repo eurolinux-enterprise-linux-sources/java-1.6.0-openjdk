@@ -7,10 +7,10 @@
 %define debug 0
 
 
-%define icedteaver 1.13.11
+%define icedteaver 1.13.12
 %define icedteasnapshot %{nil}
-%define openjdkver 39
-%define openjdkdate 03_may_2016
+%define openjdkver 40
+%define openjdkdate 22_aug_2016
 
 %define genurl http://cvs.fedoraproject.org/viewcvs/devel/java-1.6.0-openjdk/
 
@@ -84,21 +84,18 @@
 %endif
 
 %if %{gcjbootstrap}
-
-%ifarch %{jit_arches}
-%define icedteaopt --enable-systemtap
-%else
 %define icedteaopt %{nil}
-%endif
-
 %else
+%define icedteaopt --with-jdk-home=/usr/lib/jvm/%{sdklnk}
+%endif
 
 %ifarch %{jit_arches}
-%define icedteaopt --with-jdk-home=/usr/lib/jvm/%{sdklnk} --disable-bootstrap --enable-systemtap
+%define stapopt --enable-systemtap
+%define bootstrapopt %{nil}
 %else
-%define icedteaopt --with-jdk-home=/usr/lib/jvm/%{sdklnk} --disable-bootstrap
-%endif
-
+%define stapopt %{nil}
+#%%define bootstrapopt --disable-bootstrap
+%define bootstrapopt %{nil}
 %endif
 
 # Convert an absolute path to a relative path.  Each symbolic link is
@@ -162,7 +159,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{buildver}
-Release: %{icedteaver}.1%{?dist}
+Release: %{icedteaver}.6%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -263,8 +260,9 @@ BuildRequires: prelink
 #systemtap build requirement.
 BuildRequires: systemtap-sdt-devel
 %endif
-# visualvm build requirements.
-BuildRequires: jakarta-commons-logging
+# configure looks for /etc/mime.types
+# to provide the JDK symlink
+BuildRequires: mailcap
 
 Requires: fontconfig
 Requires: libjpeg = 6b
@@ -388,10 +386,11 @@ export ARCH_DATA_MODEL=64
 export CFLAGS="$CFLAGS -mieee"
 %endif
 ./autogen.sh
-./configure %{icedteaopt} --with-openjdk-src-zip=%{SOURCE1} \
+%configure %{icedteaopt} %{bootstrapopt} %{stapopt} --with-openjdk-src-zip=%{SOURCE1} \
   --with-pkgversion=rhel-%{release}-%{_arch} --enable-pulse-java \
   --with-abs-install-dir=%{_jvmdir}/%{sdkdir} \
-  --with-rhino --with-parallel-jobs=$NUM_PROC --disable-lcms2
+  --with-rhino --with-parallel-jobs=$NUM_PROC --disable-lcms2 \
+  --disable-tests --disable-systemtap-tests
 
 make DISTRIBUTION_PATCHES="patches/add-final-location-rpaths.patch patches/openjdk/8076221-pr2808-disable_rc4_cipher_suites.patch patches/openjdk/8078823-disabledalgorithms_fails_intermittently.patch patches/pr2808-fix_disabled_algorithms_test.patch" patch
 
@@ -403,9 +402,6 @@ patch -l -p0 < %{PATCH5}
 patch -l -p0 < %{PATCH6}
 %endif
 
-%if %{gcjbootstrap}
-make stamps/patch-ecj.stamp
-%endif
 make %{debugbuild} INSTALL_LOCATION="%{_jvmdir}/%{sdkdir}"
 
 %ifarch %{jit_arches}
@@ -428,6 +424,14 @@ pushd java-access-bridge-%{accessver}
   cp -a gnome-java-bridge.jar $JAVA_HOME/jre/lib/ext
 popd
 
+%check
+
+# Should be 'make check' but IcedTea 1.13.x doesn't support disabling SystemTap tests
+# Enable when we switch to 1.14.x
+#make check
+make check-mimetype
+make check-java-debug
+make check-java-src
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -457,13 +461,6 @@ pushd %{buildoutputdir}/j2sdk-image
     RELATIVE=$(%{abs2rel} %{_sysconfdir}/pki/java \
       %{_jvmdir}/%{jredir}/lib/security)
     ln -sf $RELATIVE/cacerts .
-  popd
-
-  # Install mime.types symlink.
-  pushd $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib
-    RELATIVE=$(%{abs2rel} %{_sysconfdir}/mime.types \
-      %{_jvmdir}/%{jredir}/lib)
-    ln -sf $RELATIVE .
   popd
 
   # Install extension symlinks.
@@ -899,6 +896,44 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Aug 22 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.6
+- Bump source tarballs to try and really fix TCK failures this time.
+- Resolves: rhbz#1350044
+
+* Mon Aug 22 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.5
+- Bump source tarballs to missing -DNDEBUG on JDK native code.
+- Resolves: rhbz#1350044
+
+* Fri Aug 19 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.4
+- Non-JIT architectures have not been bootstrapping, due to RPM reading commented macros
+- Resolves: rhbz#1350044
+
+* Fri Aug 19 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.3
+- Bump source tarballs to fix TCK failures.
+- Resolves: rhbz#1350044
+
+* Thu Aug 18 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.2
+- Separate bootstrap option as it should not be tied to the JDK used.
+- Enable bootstrapping on JIT architectures going forward.
+- Temporarily enable bootstrapping on all architectures to work around RH1334465/PR2956.
+- Resolves: rhbz#1350044
+
+* Wed Aug 17 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.1
+- No longer any need to add our own mime.types symlink.
+- Resolves: rhbz#1350044
+
+* Wed Aug 17 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.0
+- Update to IcedTea 1.13.12 & OpenJDK 6 b40.
+- Separate SystemTap option from bootstrap options.
+- Use configure macro and disable long-running JTreg & SystemTap tests from make check
+- Remove redundant patch-ecj target invocation for bootstrap build.
+- Add check section to run the new tests introduced in 1.13.12.
+- Fix context for rpath patch following PR3140.
+- Add RHEL version of b40 tarball.
+- Require mailcap at build time as well, so configure finds /etc/mime.types (PR2800)
+- Remove unneeded dependency on jakarta-commons-logging, as VisualVM is no longer included.
+- Resolves: rhbz#1350044
+
 * Wed May 04 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.39-1.13.11.1
 - Bump release so it is greater than the one in 6.7.
 - Resolves: rhbz#1325431

@@ -1,8 +1,8 @@
 # Dependencies
 
-OPENJDK_DATE = 03_may_2016
-OPENJDK_SHA256SUM = d11dc2ababe88e7891f1abbd7fa4fe033a65dea22c071331a641374b3247717f
-OPENJDK_VERSION = b39
+OPENJDK_DATE = 22_aug_2016
+OPENJDK_SHA256SUM = 70ac61635032e77cecf935b53b22a9545d5d0a7f55ad6a15dca9b84a2be993be
+OPENJDK_VERSION = b40
 OPENJDK_URL = https://java.net/downloads/openjdk6/
 
 CACAO_VERSION = 68fe50ac34ec
@@ -34,12 +34,20 @@ ECJ_BOOT_DIR = $(abs_top_builddir)/bootstrap/ecj
 ICEDTEA_BOOT_DIR = $(abs_top_builddir)/bootstrap/icedtea
 JAMVM_IMPORT_PATH = $(abs_top_builddir)/jamvm/install/hotspot
 SERVER_DIR = hotspot/import/jre/lib/$(INSTALL_ARCH_DIR)/server
-BUILD_JRE_ARCH_DIR = $(BUILD_OUTPUT_DIR)/j2sdk-image/jre/lib/$(INSTALL_ARCH_DIR)
-BUILD_DEBUG_JRE_ARCH_DIR = $(DEBUG_BUILD_OUTPUT_DIR)/j2sdk-image/jre/lib/$(INSTALL_ARCH_DIR)
+BUILD_SDK_DIR = $(BUILD_OUTPUT_DIR)/j2sdk-image
+BUILD_JRE_DIR = $(BUILD_OUTPUT_DIR)/j2re-image
+BUILD_JRE_ARCH_DIR = $(BUILD_SDK_DIR)/jre/lib/$(INSTALL_ARCH_DIR)
+BUILD_DEBUG_SDK_DIR = $(DEBUG_BUILD_OUTPUT_DIR)/j2sdk-image
+BUILD_DEBUG_JRE_DIR = $(DEBUG_BUILD_OUTPUT_DIR)/j2re-image
+BUILD_DEBUG_JRE_ARCH_DIR = $(BUILD_DEBUG_SDK_DIR)/jre/lib/$(INSTALL_ARCH_DIR)
+BUILD_BOOT_SDK_DIR = $(ECJ_BUILD_OUTPUT_DIR)/j2sdk-image
+BUILD_BOOT_JRE_DIR = $(ECJ_BUILD_OUTPUT_DIR)/j2re-image
+BUILD_BOOT_JRE_ARCH_DIR = $(BUILD_BOOT_SDK_DIR)/jre/lib/$(INSTALL_ARCH_DIR)
 FONTCONFIG_PATH = openjdk/jdk/src/solaris/classes/sun/awt/fontconfigs
 REWRITER_BUILD_DIR = $(abs_top_builddir)/rewriter.build
 GENERATED_BUILD_DIR = $(abs_top_builddir)/generated.build
-CRYPTO_CHECK_BUILD_DIR = $(abs_top_builddir)/cryptocheck.build
+CRYPTO_CHECK_BUILD_DIR = $(abs_top_builddir)/test/cryptocheck.build
+MIME_TYPE_CHECK_BUILD_DIR = $(abs_top_builddir)/test/mimetypecheck.build
 
 # Source directories
 
@@ -260,6 +268,7 @@ OPENJDK_ECJ_TREE = stamps/patch-ecj.stamp
 
 REWRITER_SRCS = $(top_srcdir)/rewriter/com/redhat/rewriter/ClassRewriter.java
 CRYPTO_CHECK_SRCS = $(top_srcdir)/TestCryptoLevel.java
+MIME_TYPE_CHECK_SRCS = $(top_srcdir)/test/RH1195203.java
 
 # Relative path to JTreg tool
 JTREG_DIR = src/jtreg
@@ -319,12 +328,6 @@ ICEDTEA_PATCHES = \
 	$(UPSTREAMED_PATCHES) \
 	patches/openjdk/6733501-icedtea_lcms_test.patch \
 	$(LCMS_PATCHES) \
-	patches/openjdk/6791502-invalid_icc_profile.patch \
-	patches/openjdk/6793818-jpegimagereader_too_greedy.patch \
-	patches/openjdk/6631559-dont_load_libjpeg_to_register_imageio_plugins.patch \
-	patches/openjdk/4893408-jpegreader_byte_gray.patch \
-	patches/openjdk/6888215-jpeg_memory_leak.patch \
-	patches/openjdk/6989774-imageio_compiler_warnings.patch \
 	patches/openjdk/7018912-potential_buffer_overruns_in_jpeg.patch \
 	patches/openjdk/6989760-native_warnings.patch \
 	patches/openjdk/7013519-integer_overflows.patch \
@@ -360,7 +363,6 @@ ICEDTEA_PATCHES = \
 	patches/network-unreachable.patch \
 	patches/dnd-filelists.patch \
 	patches/explicit-target-arch.patch \
-	patches/parisc.patch \
 	patches/policy-evaluation.patch \
 	patches/openjdk/6959123-libpng_14.patch \
 	patches/applet_hole.patch \
@@ -442,7 +444,6 @@ ICEDTEA_PATCHES = \
 	patches/openjdk/7049339-anyblit-broken.patch \
 	patches/openjdk/4917091-javac_rejects_array_over_128_in_length.patch \
 	patches/openjdk/6390045-error_cannot_access_java_lang_void.patch \
-	patches/openjdk/6752638-preferLocaleFonts_throws_NPE.patch \
 	patches/openjdk/5047314-Collator_compare_runs_indefinitely.patch \
 	patches/openjdk/6934356-Vector_writeObject_serialization_DL.patch \
 	patches/openjdk/7036582-Improve_test_coverage_of_BigDecimal.patch \
@@ -517,17 +518,8 @@ ICEDTEA_PATCHES = \
 	patches/print_lsb_release.patch \
 	patches/alternative_krb5_cache.patch \
 	patches/alternative_krb5_cache_fixup.patch \
-	patches/imageiojpeg_sync.patch \
 	patches/openjdk/8005194-scale_memory_leak.patch \
-	patches/openjdk/6563752-ss12_support.patch \
-	patches/openjdk/6729772-opt_cleanup.patch \
-	patches/openjdk/6799141-split_out_versions.patch \
 	patches/freetypeversion.patch \
-	patches/openjdk/6816311-compiler_name.patch \
-	patches/openjdk/6974017-minorver_for_solaris.patch \
-	patches/openjdk/6980281-majorver_for_solaris.patch \
-	patches/openjdk/7000225-bad_tabs.patch \
-	patches/openjdk/7038711-fix_no-clobber_usage.patch \
 	patches/disable-cc-incompatible-sanity-checks.patch \
 	patches/rh995488-rhel_tz_fix.patch \
 	patches/hotspot/hs23/remove_jsr292_tests.patch \
@@ -626,7 +618,12 @@ ICEDTEA_PATCHES = \
 	patches/openjdk/8071705-pr2820-menu_misbehaviour.patch \
 	patches/openjdk/8150954-pr2868-composite_desktop.patch \
 	patches/pr2890-system_cacerts.patch \
-	patches/openjdk/6863746-pr2951-no_ct.sym_in_javap.patch
+	patches/openjdk/6863746-pr2951-no_ct.sym_in_javap.patch \
+	patches/openjdk/2178143-pr2959.patch \
+	patches/pr3137-alt_button_order.patch \
+	patches/openjdk/6260348-pr3068.patch \
+	patches/openjdk/6961123-pr2975.patch \
+	patches/pr2800-missing_resources.patch
 
 if WITH_RHINO
 ICEDTEA_PATCHES += \
@@ -832,8 +829,8 @@ ICEDTEA_ENV = \
 	VERBOSE="$(VERBOSE)" \
 	ALT_OUTPUTDIR="$(BUILD_OUTPUT_DIR)" \
 	STATIC_CXX="false" \
-	BUILD_GCC=gcc$(GCC_SUFFIX) \
-	BUILD_CXX=g++$(GCC_SUFFIX) \
+	CC=$(CC)$(GCC_SUFFIX) \
+	CXX=$(CXX)$(GCC_SUFFIX) \
 	COMPILER_WARNINGS_FATAL="$(WERROR_STATUS)" \
 	UNLIMITED_CRYPTO="true"
 
@@ -966,21 +963,19 @@ EXTRA_DIST = $(top_srcdir)/generated \
 	rewriter/agpl-3.0.txt \
 	$(REWRITER_SRCS) \
 	$(TAPSET_TEST_SRCS) \
-	$(CRYPTO_CHECK_SRCS)
+	$(CRYPTO_CHECK_SRCS) \
+	$(MIME_TYPE_CHECK_SRCS)
 
 # Top-Level Targets
 # =================
 
 all-local: icedtea-against-icedtea
 
-check-local: jtregcheck check-tapset
+check-local: jtregcheck check-tapset check-mimetype \
+ check-java-debug check-java-src
 
-clean-tests: clean-jtreg clean-tapset-report
-	if [ $(abs_top_srcdir) != $(abs_top_builddir) ] ; then \
-	  if [ -e test ] ; then \
-	    rmdir test ; \
-	  fi \
-	fi
+clean-tests: clean-jtreg clean-tapset-report clean-check-mimetype \
+ clean-check-java-debug clean-check-java-src clean-cryptocheck clean-mimetypecheck
 
 clean-local: clean-tests $(PULSE_JAVA_CLEAN_TARGET) \
  clean-icedtea clean-icedtea-debug clean-icedtea-ecj clean-extract clean-ports \
@@ -988,7 +983,7 @@ clean-local: clean-tests $(PULSE_JAVA_CLEAN_TARGET) \
  clean-icedtea-against-ecj clean-extract-ecj clean-generated clean-replace-hotspot \
  clean-rewriter clean-rewrite-rhino clean-rt clean-bootstrap-directory \
  clean-bootstrap-directory-ecj clean-bootstrap-directory-symlink \
- clean-bootstrap-directory-symlink-ecj clean-fonts clean-cryptocheck
+ clean-bootstrap-directory-symlink-ecj clean-fonts
 	if [ -e bootstrap ]; then \
 	  rmdir bootstrap ; \
 	fi
@@ -1017,7 +1012,7 @@ install:
 	clean-tools-jar clean-copy clean-rt hotspot \
 	hotspot-helper clean-extra clean-jtreg clean-jtreg-reports \
 	clean-add-zero clean-add-zero-debug clean-icedtea clean-icedtea-debug \
-	clean-icedtea-against-ecj \
+	clean-icedtea-against-ecj clean-check-mimetype clean-mimetypecheck \
 	clean-jamvm clean-add-jamvm clean-add-jamvm-debug \
 	clean-cacao clean-add-cacao clean-add-cacao-debug \
 	clean-ports clean-overlay clean-extract-ecj clean-extract clean-extract-openjdk \
@@ -1028,7 +1023,9 @@ install:
 	clean-add-pulseaudio-ecj clean-add-nss-ecj clean-add-tzdata-support-ecj clean-fonts \
 	clean-download-hotspot clean-tests clean-tapset-report jtregcheck clean-pax-mark-vm \
 	clean-pax-mark-vm-debug clean-pax-mark-vm-ecj clean-check-crypto clean-check-crypto-debug \
-	clean-check-crypto-boot clean-cryptocheck
+	clean-check-crypto-boot clean-cryptocheck clean-add-mime-types-file \
+	clean-add-mime-types-file-debug clean-add-mime-types-file-boot clean-check-java-src \
+	clean-check-java-debug
 
 env:
 	@echo 'unset JAVA_HOME'
@@ -1742,27 +1739,28 @@ stamps/icedtea-against-icedtea.stamp: stamps/icedtea.stamp \
  stamps/add-jamvm.stamp stamps/add-cacao.stamp stamps/add-zero.stamp \
  stamps/add-systemtap.stamp stamps/add-pulseaudio.stamp stamps/add-nss.stamp \
  stamps/add-tzdata-support.stamp stamps/add-archive.stamp stamps/pax-mark-vm.stamp \
- stamps/check-crypto.stamp
+ stamps/check-crypto.stamp stamps/add-mime-types-file.stamp
 	mkdir -p stamps
 	touch $@
 
 clean-icedtea-against-icedtea: clean-add-jamvm clean-add-zero clean-add-cacao \
  clean-add-systemtap clean-add-pulseaudio clean-add-nss clean-add-tzdata-support \
- clean-add-archive clean-pax-mark-vm clean-check-crypto
+ clean-add-archive clean-pax-mark-vm clean-check-crypto clean-add-mime-types-file
 	rm -f stamps/icedtea-against-icedtea.stamp
 
 stamps/icedtea-debug-against-icedtea.stamp: stamps/icedtea-debug.stamp \
  stamps/add-jamvm-debug.stamp stamps/add-cacao-debug.stamp \
  stamps/add-zero-debug.stamp stamps/add-systemtap-debug.stamp stamps/add-pulseaudio-debug.stamp \
  stamps/add-nss-debug.stamp stamps/add-tzdata-support-debug.stamp stamps/add-archive-debug.stamp \
- stamps/pax-mark-vm-debug.stamp stamps/check-crypto-debug.stamp
+ stamps/pax-mark-vm-debug.stamp stamps/check-crypto-debug.stamp stamps/add-mime-types-file-debug.stamp
 	mkdir -p stamps
 	touch $@
 
 clean-icedtea-debug-against-icedtea: clean-add-zero-debug \
  clean-add-jamvm-debug clean-add-cacao-debug clean-add-systemtap-debug \
  clean-add-pulseaudio-debug clean-add-nss-debug clean-add-tzdata-support-debug \
- clean-add-archive-debug clean-pax-mark-vm-debug clean-check-crypto-debug
+ clean-add-archive-debug clean-pax-mark-vm-debug clean-check-crypto-debug \
+ clean-add-mime-types-file-debug
 	rm -f stamps/icedtea-debug-against-icedtea.stamp
 
 stamps/add-systemtap.stamp: stamps/icedtea.stamp
@@ -2038,7 +2036,7 @@ clean-add-archive-debug:
 
 stamps/pax-mark-vm.stamp: stamps/icedtea.stamp
 if WITH_PAX
-	$(abs_top_builddir)/pax-mark-vm $(BUILD_OUTPUT_DIR)/j2sdk-image
+	$(abs_top_builddir)/pax-mark-vm $(BUILD_SDK_DIR) true
 endif
 	touch $@
 
@@ -2047,7 +2045,7 @@ clean-pax-mark-vm:
 
 stamps/pax-mark-vm-debug.stamp: stamps/icedtea-debug.stamp
 if WITH_PAX
-	$(abs_top_builddir)/pax-mark-vm $(DEBUG_BUILD_OUTPUT_DIR)/j2sdk-image
+	$(abs_top_builddir)/pax-mark-vm $(BUILD_DEBUG_SDK_DIR) true
 endif
 	touch $@
 
@@ -2074,6 +2072,34 @@ stamps/check-crypto-debug.stamp: stamps/cryptocheck.stamp stamps/pax-mark-vm-deb
 clean-check-crypto-debug:
 	rm -f stamps/check-crypto-debug.stamp
 
+stamps/add-mime-types-file.stamp: stamps/icedtea.stamp
+if MIME_TYPES_FILE_FOUND
+	if [ -e $(BUILD_SDK_DIR)/jre/lib ] ; then \
+	  ln -sf $(MIME_TYPES_FILE) $(BUILD_SDK_DIR)/jre/lib/mime.types ; \
+	fi
+endif
+	touch $@
+
+clean-add-mime-types-file:
+	if [ -e $(BUILD_SDK_DIR)/jre/lib/mime.types ] ; then \
+	  rm -vf $(BUILD_SDK_DIR)/jre/lib/mime.types ; \
+	fi
+	rm -f stamps/add-mime-types-file.stamp
+
+stamps/add-mime-types-file-debug.stamp: stamps/icedtea-debug.stamp
+if MIME_TYPES_FILE_FOUND
+	if [ -e $(BUILD_DEBUG_SDK_DIR)/jre/lib ] ; then \
+	  ln -sf $(MIME_TYPES_FILE) $(BUILD_DEBUG_SDK_DIR)/jre/lib/mime.types ; \
+	fi
+endif
+	touch $@
+
+clean-add-mime-types-file-debug:
+	if [ -e $(BUILD_DEBUG_SDK_DIR)/jre/lib/mime.types ] ; then \
+	  rm -vf $(BUILD_DEBUG_SDK_DIR)/jre/lib/mime.types ; \
+	fi
+	rm -f stamps/add-mime-types-file-debug.stamp
+
 # OpenJDK ecj Targets
 # ===================
 
@@ -2095,12 +2121,14 @@ clean-icedtea-ecj:
 
 stamps/icedtea-against-ecj.stamp: stamps/icedtea-ecj.stamp stamps/add-systemtap-ecj.stamp \
  stamps/add-pulseaudio-ecj.stamp stamps/add-nss-ecj.stamp stamps/add-tzdata-support-ecj.stamp \
- stamps/add-archive-ecj.stamp stamps/pax-mark-vm-ecj.stamp stamps/check-crypto-boot.stamp
+ stamps/add-archive-ecj.stamp stamps/pax-mark-vm-ecj.stamp stamps/check-crypto-boot.stamp \
+ stamps/add-mime-types-file-boot.stamp
 	mkdir -p stamps
 	touch $@
 
 clean-icedtea-against-ecj: clean-add-systemtap-ecj clean-add-pulseaudio-ecj clean-add-nss-ecj \
- clean-add-tzdata-support-ecj clean-add-archive-ecj clean-pax-mark-vm-ecj clean-check-crypto-boot
+ clean-add-tzdata-support-ecj clean-add-archive-ecj clean-pax-mark-vm-ecj clean-check-crypto-boot \
+ clean-add-mime-types-file-boot
 	rm -f stamps/icedtea-against-ecj.stamp
 
 stamps/add-systemtap-ecj.stamp: stamps/icedtea-ecj.stamp
@@ -2241,7 +2269,7 @@ clean-add-archive-ecj:
 
 stamps/pax-mark-vm-ecj.stamp: stamps/icedtea-ecj.stamp
 if WITH_PAX
-	$(abs_top_builddir)/pax-mark-vm $(ECJ_BUILD_OUTPUT_DIR)/j2sdk-image
+	$(abs_top_builddir)/pax-mark-vm $(BUILD_BOOT_SDK_DIR) true
 endif
 	touch $@
 
@@ -2257,6 +2285,20 @@ stamps/check-crypto-boot.stamp: stamps/cryptocheck.stamp stamps/pax-mark-vm-ecj.
 
 clean-check-crypto-boot:
 	rm -f stamps/check-crypto-boot.stamp
+
+stamps/add-mime-types-file-boot.stamp: stamps/icedtea-ecj.stamp
+if MIME_TYPES_FILE_FOUND
+	if [ -e $(BUILD_BOOT_SDK_DIR)/jre/lib ] ; then \
+	  ln -sf $(MIME_TYPES_FILE) $(BUILD_BOOT_SDK_DIR)/jre/lib/mime.types ; \
+	fi
+endif
+	touch $@
+
+clean-add-mime-types-file-boot:
+	if [ -e $(BUILD_BOOT_SDK_DIR)/jre/lib/mime.types ] ; then \
+	  rm -vf $(BUILD_BOOT_SDK_DIR)/jre/lib/mime.types ; \
+	fi
+	rm -f stamps/add-mime-types-file-boot.stamp
 
 # Rebuild targets
 
@@ -2676,7 +2718,7 @@ clean-add-zero-debug:
 # end additional VMs
 
 
-# jtreg
+# Test cases
 
 stamps/jtreg.stamp: stamps/icedtea-against-icedtea.stamp
 	rm -rf test/jtreg/classes
@@ -2811,6 +2853,62 @@ if ENABLE_SYSTEMTAP
 	rm -f test/check-stap.log
 endif
 
+stamps/check-mimetype.stamp: stamps/mimetypecheck.stamp stamps/icedtea.stamp
+	if [ -e $(BUILD_SDK_DIR)/bin/java ] ; then \
+	  echo "<html><head/><body/></html>" > $(MIME_TYPE_CHECK_BUILD_DIR)/test.html ; \
+	  expected="text/html" ; \
+	  html=$$($(BUILD_SDK_DIR)/bin/java -cp $(MIME_TYPE_CHECK_BUILD_DIR) RH1195203 \
+	    $(MIME_TYPE_CHECK_BUILD_DIR)/test.html) ; \
+	  if test "x$${html}" != "x$${expected}" ; then \
+	    echo "MIME type test failed; expected $${expected}, got $${html}" ; \
+	    exit -1; \
+	  fi ; \
+	fi
+if JAVA_SOURCE_SUPPORTED
+	if [ -e $(BUILD_SDK_DIR)/bin/java ] ; then \
+	  expected="text/x-java-source" ; \
+	  java=$$($(BUILD_SDK_DIR)/bin/java -cp $(MIME_TYPE_CHECK_BUILD_DIR) RH1195203 \
+	    $(MIME_TYPE_CHECK_SRCS)) ; \
+	  if test "x$${java}" != "x$${expected}"; then \
+	    echo "MIME type test failed; expected $${expected}, got $${java}" ; \
+	    exit -1; \
+	  fi ; \
+	fi
+endif
+	mkdir -p stamps
+	touch $@
+
+clean-check-mimetype:
+	rm -f $(MIME_TYPE_CHECK_BUILD_DIR)/test.html
+	rm -f stamps/check-mimetype.stamp
+
+# Check class files, both from in-tree and generated sources, contain debug info
+stamps/check-java-debug.stamp: stamps/icedtea.stamp
+	@echo "Checking that Java classes include debug info"
+	if [ -e $(BUILD_SDK_DIR)/bin/javap ] ; then \
+	  $(BUILD_SDK_DIR)/bin/javap -l java.lang.Object | grep "Compiled from" ; \
+	  $(BUILD_SDK_DIR)/bin/javap -l java.lang.Object | grep LineNumberTable ; \
+	  $(BUILD_SDK_DIR)/bin/javap -l java.lang.Object | grep LocalVariableTable ; \
+	  $(BUILD_SDK_DIR)/bin/javap -l java.nio.ByteBuffer | grep "Compiled from" ; \
+	  $(BUILD_SDK_DIR)/bin/javap -l java.nio.ByteBuffer | grep LineNumberTable ; \
+	  $(BUILD_SDK_DIR)/bin/javap -l java.nio.ByteBuffer | grep LocalVariableTable ; \
+	fi
+	mkdir -p stamps
+	touch $@
+
+clean-check-java-debug:
+	rm -f stamps/check-java-debug.stamp
+
+# Check source files are included in the source zip
+stamps/check-java-src.stamp: stamps/icedtea.stamp
+	@echo "Checking for Java sources in src.zip"
+	$(UNZIP) -l $(BUILD_SDK_DIR)/src.zip | grep 'sun.misc.Unsafe'
+	mkdir -p stamps
+	touch $@
+
+clean-check-java-src:
+	rm -f stamps/check-java-src.stamp
+
 # Support classes for non-OpenJDK bootstraps
 
 # rt.jar additional class files.
@@ -2870,6 +2968,19 @@ clean-cryptocheck:
 	rm -rf $(CRYPTO_CHECK_BUILD_DIR)
 	rm -f stamps/cryptocheck.stamp
 
+# Mime Type Check
+
+stamps/mimetypecheck.stamp: $(INITIAL_BOOTSTRAP_LINK_STAMP)
+	mkdir -p $(MIME_TYPE_CHECK_BUILD_DIR)
+	$(BOOT_DIR)/bin/javac $(IT_JAVACFLAGS) \
+	  -d $(MIME_TYPE_CHECK_BUILD_DIR) $(MIME_TYPE_CHECK_SRCS)
+	mkdir -p stamps
+	touch $@
+
+clean-mimetypecheck: clean-check-mimetype
+	rm -rf $(MIME_TYPE_CHECK_BUILD_DIR)
+	rm -f stamps/mimetypecheck.stamp
+
 # Target Aliases
 # ===============
 
@@ -2886,6 +2997,12 @@ add-cacao-debug: stamps/add-cacao-debug.stamp
 add-jamvm: stamps/add-jamvm.stamp
 
 add-jamvm-debug: stamps/add-jamvm-debug.stamp
+
+add-mime-types-file: stamps/add-mime-types-file.stamp
+
+add-mime-types-file-debug: stamps/add-mime-types-file-debug.stamp
+
+add-mime-types-file-boot: stamps/add-mime-types-file-boot.stamp
 
 add-nss: stamps/add-nss.stamp
 
@@ -2930,6 +3047,12 @@ check-crypto: stamps/check-crypto.stamp
 check-crypto-boot: stamps/check-crypto-boot.stamp
 
 check-crypto-debug: stamps/check-crypto-debug.stamp
+
+check-java-src: stamps/check-java-src.stamp
+
+check-java-debug: stamps/check-java-debug.stamp
+
+check-mimetype: stamps/check-mimetype.stamp
 
 cryptocheck: stamps/cryptocheck.stamp
 
@@ -2980,6 +3103,8 @@ jtreg: stamps/jtreg.stamp
 liveconnect: stamps/liveconnect.stamp
 
 liveconnect-dist: stamps/liveconnect-dist.stamp
+
+mimetypecheck: stamps/mimetypecheck.stamp
 
 native-ecj: stamps/native-ecj.stamp
 

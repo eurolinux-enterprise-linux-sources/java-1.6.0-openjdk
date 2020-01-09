@@ -1,0 +1,21 @@
+# HG changeset patch
+# User omajid
+# Date 1451403643 18000
+#      Tue Dec 29 10:40:43 2015 -0500
+# Node ID b8a5aed0fb7c96d033e97277bd20bbb6ed5b0a4b
+# Parent  a70af3aae22ba6c6fbd0cff2430e7cfeaf21f5f0
+6961123, PR2975: setWMClass fails to null-terminate WM_CLASS string
+Reviewed-by: andrew, serb
+
+diff --git a/src/solaris/classes/sun/awt/X11/XBaseWindow.java b/src/solaris/classes/sun/awt/X11/XBaseWindow.java
+--- openjdk/jdk/src/solaris/classes/sun/awt/X11/XBaseWindow.java
++++ openjdk/jdk/src/solaris/classes/sun/awt/X11/XBaseWindow.java
+@@ -661,7 +661,7 @@
+         XToolkit.awtLock();
+         try {
+             XAtom xa = XAtom.get(XAtom.XA_WM_CLASS);
+-            xa.setProperty8(getWindow(), cl[0] + '\0' + cl[1]);
++            xa.setProperty8(getWindow(), cl[0] + '\0' + cl[1] + '\0');
+         } finally {
+             XToolkit.awtUnlock();
+         }

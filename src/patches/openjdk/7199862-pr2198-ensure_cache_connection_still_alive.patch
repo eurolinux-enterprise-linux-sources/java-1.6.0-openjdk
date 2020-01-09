@@ -33,7 +33,7 @@ diff -r c4ed64237075 src/share/classes/sun/net/www/http/HttpClient.java
 @@ -268,6 +269,12 @@
          /* see if one's already around */
          if (useCache) {
-             ret = (HttpClient) kac.get(url, null);
+             ret = kac.get(url, null);
 +            if (ret != null && httpuc != null &&
 +                httpuc.streaming() &&
 +                httpuc.getRequestMethod() == "POST") {

@@ -1,4 +1,4 @@
-AC_INIT([icedtea6],[1.13.11],[distro-pkg-dev@openjdk.java.net])
+AC_INIT([icedtea6],[1.13.12],[distro-pkg-dev@openjdk.java.net])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([1.9 tar-pax foreign])
@@ -51,6 +51,8 @@ IT_CHECK_FOR_MERCURIAL
 IT_OBTAIN_HG_REVISIONS
 AC_PATH_TOOL([LSB_RELEASE],[lsb_release])
 IT_WITH_GCJ
+IT_CHECK_FOR_MIME_TYPES
+
 IT_WITH_HOTSPOT_BUILD
 AC_PATH_TOOL([LINUX32],[linux32])
 IT_CHECK_GCC_VERSION

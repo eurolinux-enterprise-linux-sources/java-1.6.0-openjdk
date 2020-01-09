@@ -1,0 +1,152 @@
+# HG changeset patch
+# User ssadetsky
+# Date 1468898831 -3600
+#      Tue Jul 19 04:27:11 2016 +0100
+# Node ID 830b7280229ea89e94ad8828ea6201c89f32da27
+# Parent  43efac8a0030e2bb6b4c9a7ecb16c695b9794c69
+6260348, PR3068: GTK+ L&F JTextComponent not respecting desktop caret blink rate
+Reviewed-by: alexsch, azvegint
+
+diff -Nru openjdk.orig/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java
+--- openjdk.orig/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java	2016-08-12 02:47:03.891111822 +0100
++++ openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java	2016-08-12 02:47:59.238196204 +0100
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2005, 2007, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2005, 2015, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -94,7 +94,9 @@
+     static enum Settings {
+         GTK_FONT_NAME,
+         GTK_ICON_SIZES,
+-	GTK_BUTTON_ORDER
++        GTK_BUTTON_ORDER,
++        GTK_CURSOR_BLINK,
++        GTK_CURSOR_BLINK_TIME
+     }
+ 
+     /* Custom regions are needed for representing regions that don't exist
+diff -Nru openjdk.orig/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java
+--- openjdk.orig/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java	2016-08-12 02:47:03.891111822 +0100
++++ openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java	2016-08-12 02:48:38.625544564 +0100
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2002, 2007, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2002, 2015, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -371,7 +371,17 @@
+         int vProgWidth  =  22 - (progXThickness * 2);
+         int vProgHeight =  80 - (progYThickness * 2);
+ 
+-        Integer caretBlinkRate = new Integer(500);
++        Integer caretBlinkRate;
++        if (Boolean.FALSE.equals(GTKEngine.INSTANCE.getSetting(
++                GTKEngine.Settings.GTK_CURSOR_BLINK))) {
++            caretBlinkRate = Integer.valueOf(0);
++        } else {
++            caretBlinkRate = (Integer) GTKEngine.INSTANCE.getSetting(
++                    GTKEngine.Settings.GTK_CURSOR_BLINK_TIME);
++            if (caretBlinkRate == null) {
++                caretBlinkRate = Integer.valueOf(500);
++            }
++        }
+         Insets zeroInsets = new InsetsUIResource(0, 0, 0, 0);
+ 
+         Double defaultCaretAspectRatio = new Double(0.025);
+diff -Nru openjdk.orig/jdk/src/solaris/native/sun/awt/gtk2_interface.c openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.c
+--- openjdk.orig/jdk/src/solaris/native/sun/awt/gtk2_interface.c	2016-08-12 02:47:03.891111822 +0100
++++ openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.c	2016-08-12 02:50:48.151401372 +0100
+@@ -1055,9 +1055,6 @@
+             {
+                 result = gtk2_widgets[_GTK_COMBO_BOX_TEXT_FIELD_TYPE] =
+                      (*fp_gtk_entry_new)();
+-
+-                GtkSettings* settings = fp_gtk_widget_get_settings(result);
+-                fp_g_object_set(settings, "gtk-cursor-blink", FALSE, NULL);
+             }
+             result = gtk2_widgets[_GTK_COMBO_BOX_TEXT_FIELD_TYPE];
+             break;
+@@ -1102,10 +1099,6 @@
+             {
+                 gtk2_widgets[_GTK_ENTRY_TYPE] =
+                     (*fp_gtk_entry_new)();
+-
+-                GtkSettings* settings =
+-                    fp_gtk_widget_get_settings(gtk2_widgets[_GTK_ENTRY_TYPE]);
+-                fp_g_object_set(settings, "gtk-cursor-blink", FALSE, NULL);
+             }
+             result = gtk2_widgets[_GTK_ENTRY_TYPE];
+             break;
+@@ -1298,8 +1291,6 @@
+                 result = gtk2_widgets[_GTK_SPIN_BUTTON_TYPE] =
+                     (*fp_gtk_spin_button_new)(NULL, 0, 0);
+ 
+-                GtkSettings* settings = fp_gtk_widget_get_settings(result);
+-                fp_g_object_set(settings, "gtk-cursor-blink", FALSE, NULL);
+             }
+             result = gtk2_widgets[_GTK_SPIN_BUTTON_TYPE];
+             break;
+@@ -2253,21 +2244,20 @@
+ 
+     return result;
+ }
+-/*
++
+ jobject get_integer_property(JNIEnv *env, GtkSettings* settings, const gchar* key)
+ {
+-    gint    intval = NULL;
+-
++    gint intval = NULL;
+     (*fp_g_object_get)(settings, key, &intval, NULL);
+     return create_Integer(env, intval);
+-}*/
++}
+ 
+ jobject get_boolean_property(JNIEnv* env, GtkSettings* settings, const gchar *key)
+ {
+-    gboolean boolval = NULL;
++    gint intval = NULL;
+ 
+-    (*fp_g_object_get)(settings, key, &boolval, NULL);
+-    return create_Boolean(env, (jboolean) boolval);
++    (*fp_g_object_get)(settings, key, &intval, NULL);
++    return create_Boolean(env, intval);
+ }
+ 
+ jobject gtk2_get_setting(JNIEnv *env, Setting property)
+@@ -2282,6 +2272,10 @@
+             return get_string_property(env, settings, "gtk-icon-sizes");
+         case GTK_BUTTON_ORDER:
+ 	    return get_boolean_property(env, settings, "gtk-alternative-button-order");
++        case GTK_CURSOR_BLINK:
++            return get_boolean_property(env, settings, "gtk-cursor-blink");
++        case GTK_CURSOR_BLINK_TIME:
++            return get_integer_property(env, settings, "gtk-cursor-blink-time");
+     }
+ 
+     return NULL;
+diff -Nru openjdk.orig/jdk/src/solaris/native/sun/awt/gtk2_interface.h openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.h
+--- openjdk.orig/jdk/src/solaris/native/sun/awt/gtk2_interface.h	2016-08-12 02:47:03.891111822 +0100
++++ openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.h	2016-08-12 02:52:32.173679886 +0100
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2005, 2015, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -125,7 +125,9 @@
+ {
+     GTK_FONT_NAME,
+     GTK_ICON_SIZES,
+-    GTK_BUTTON_ORDER
++    GTK_BUTTON_ORDER,
++    GTK_CURSOR_BLINK,
++    GTK_CURSOR_BLINK_TIME
+ } Setting;
+ 
+ /* GTK types, here to eliminate need for GTK headers at compile time */

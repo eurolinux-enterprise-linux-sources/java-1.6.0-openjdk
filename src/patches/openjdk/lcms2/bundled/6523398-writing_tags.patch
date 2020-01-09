@@ -1,6 +1,6 @@
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam02.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam02.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam02.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam02.c	2013-12-19 12:12:15.815239068 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam02.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam02.c	2016-05-18 03:56:07.430737147 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -401,7 +401,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam02.c openj
  }
  
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam97.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam97.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam97.c	2013-12-06 00:20:25.000000000 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam97.c	2016-05-03 23:38:49.000000000 +0100
 +++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam97.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,750 +0,0 @@
 -/*
@@ -1155,8 +1155,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscam97.c openj
 -
 -}
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c	2013-12-19 12:12:15.819239130 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c	2016-05-03 23:59:14.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c	2016-05-18 03:59:35.483319782 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -2920,11 +2920,11 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
 +    cmsHANDLE hIT8;
 +    cmsIT8*  it8;
 +    int type;
-+
-+    _cmsAssert(Ptr != NULL);
-+    _cmsAssert(len != 0);
  
 -    int type = IsMyBlock((LPBYTE) Ptr, len);
++    _cmsAssert(Ptr != NULL);
++    _cmsAssert(len != 0);
++
 +    type = IsMyBlock((cmsUInt8Number*)Ptr, len);
      if (type == 0) return NULL;
  
@@ -2967,10 +2967,10 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
 +     cmsHANDLE hIT8;
 +     cmsIT8*  it8;
 +     int type;
++
++     _cmsAssert(cFileName != NULL);
  
 -     int type = IsMyFile(cFileName);
-+     _cmsAssert(cFileName != NULL);
-+
 +     type = IsMyFile(cFileName);
       if (type == 0) return NULL;
  
@@ -3013,9 +3013,9 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
 -        LPTABLE t = GetTable(it8);
 +    cmsIT8* it8 = (cmsIT8*) hIT8;
 +    TABLE* t;
-+
-+    _cmsAssert(hIT8 != NULL);
  
++    _cmsAssert(hIT8 != NULL);
++
 +    t = GetTable(it8);
 +
 +    if (SampleNames)
@@ -3101,7 +3101,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
                          return i;
                  }
          }
-@@ -2459,62 +2390,65 @@
+@@ -2459,63 +2390,66 @@
  
  
  static
@@ -3140,11 +3140,12 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
      for (i=0; i < t->nSamples; i++) {
  
          fld = GetDataFormat(it8, i);
--        if (stricmp(fld, cSample) == 0)
-+        if (cmsstrcasecmp(fld, cSample) == 0)
-             return i;
+         if (fld != NULL) {
+-	    if (stricmp(fld, cSample) == 0)
++	    if (cmsstrcasecmp(fld, cSample) == 0)
+ 		return i;
+ 	}
      }
- 
 -
 -    // SynError(it8, "Couldn't find data field %s\n", cSample);
      return -1;
@@ -3182,7 +3183,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
  {
      const char* Buffer;
  
-@@ -2530,19 +2464,23 @@
+@@ -2531,19 +2465,23 @@
  }
  
  
@@ -3210,7 +3211,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
      sprintf(Buff, it8->DoubleFormatter, Val);
  
      return SetData(it8, row, col, Buff);
-@@ -2550,18 +2488,18 @@
+@@ -2551,18 +2489,18 @@
  
  
  
@@ -3232,7 +3233,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
      iSet = LocatePatch(it8, cPatch);
      if (iSet < 0) {
              return NULL;
-@@ -2571,7 +2509,7 @@
+@@ -2572,7 +2510,7 @@
  }
  
  
@@ -3241,7 +3242,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
  {
      const char* Buffer;
  
-@@ -2589,100 +2527,109 @@
+@@ -2590,100 +2528,109 @@
  
  
  
@@ -3398,7 +3399,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
      if (cField != NULL && *cField == 0)
              cField = "LABEL";
  
-@@ -2700,18 +2647,21 @@
+@@ -2701,18 +2648,21 @@
  
      if (ExpectedType) {
  
@@ -3424,7 +3425,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
      if(pos == -1)
          return FALSE;
  
-@@ -2720,9 +2670,11 @@
+@@ -2721,9 +2671,11 @@
  }
  
  
@@ -3439,8 +3440,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscgats.c openj
      if (Formatter == NULL)
          strcpy(it8->DoubleFormatter, DEFAULT_DBL_FORMAT);
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscnvrt.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscnvrt.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscnvrt.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscnvrt.c	2013-12-19 12:12:15.819239130 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscnvrt.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmscnvrt.c	2016-05-18 03:56:07.430737147 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -4889,8 +4890,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmscnvrt.c openj
 +}
  
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmserr.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmserr.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmserr.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmserr.c	2013-12-19 12:12:15.819239130 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmserr.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmserr.c	2016-05-18 03:56:07.434737081 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -5357,8 +5358,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmserr.c openjdk
 +}
 +
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgamma.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgamma.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgamma.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgamma.c	2013-12-19 12:12:15.819239130 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgamma.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgamma.c	2016-05-18 03:56:07.434737081 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -7159,8 +7160,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgamma.c openj
  }
 +
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgmt.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgmt.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgmt.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgmt.c	2013-12-19 12:12:15.819239130 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgmt.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgmt.c	2016-05-18 03:56:07.434737081 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -8784,8 +8785,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsgmt.c openjdk
 +    return TRUE;
  }
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsintrp.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsintrp.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsintrp.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsintrp.c	2013-12-19 12:12:15.823239190 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsintrp.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsintrp.c	2016-05-18 03:56:07.434737081 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -10848,8 +10849,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsintrp.c openj
 -#undef DENS
 -
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio0.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio0.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio0.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio0.c	2013-12-19 12:12:15.823239190 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio0.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio0.c	2016-05-18 03:56:07.438737016 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -12897,8 +12898,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio0.c openjdk
 +    return TRUE;
 +}
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio1.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio1.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio1.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio1.c	2013-12-19 12:12:15.823239190 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio1.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio1.c	2016-05-18 03:56:07.438737016 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -17088,8 +17089,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsio1.c openjdk
  }
 -
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmslut.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmslut.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmslut.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmslut.c	2013-12-19 12:12:15.827239250 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmslut.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmslut.c	2016-05-18 03:56:07.442736950 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -19209,7 +19210,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmslut.c openjdk
 -
 -
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmatsh.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmatsh.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmatsh.c	2013-12-06 00:20:25.000000000 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmatsh.c	2016-05-03 23:38:49.000000000 +0100
 +++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmatsh.c	1970-01-01 01:00:00.000000000 +0100
 @@ -1,411 +0,0 @@
 -/*
@@ -19625,7 +19626,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmatsh.c openj
 -}
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmd5.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmd5.c
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmd5.c	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmd5.c	2013-12-19 12:12:15.835239368 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmd5.c	2016-05-18 03:56:07.442736950 +0100
 @@ -0,0 +1,346 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -19974,8 +19975,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmd5.c openjdk
 +}
 +
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmtrx.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmtrx.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmtrx.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmtrx.c	2013-12-19 12:12:15.827239250 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmtrx.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmtrx.c	2016-05-18 03:56:07.442736950 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -20860,8 +20861,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsmtrx.c openjd
 -
 -
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsnamed.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsnamed.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsnamed.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsnamed.c	2013-12-19 12:12:15.827239250 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsnamed.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsnamed.c	2016-05-18 03:56:07.446736885 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -21683,7 +21684,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsnamed.c openj
 +
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsopt.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsopt.c
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsopt.c	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsopt.c	2013-12-19 12:12:15.835239368 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsopt.c	2016-05-18 03:56:07.446736885 +0100
 @@ -0,0 +1,1657 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -23343,8 +23344,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsopt.c openjdk
 +}
 +
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspack.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmspack.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspack.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmspack.c	2013-12-19 12:12:15.827239250 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspack.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmspack.c	2016-05-18 03:56:07.450736818 +0100
 @@ -27,8 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -27383,8 +27384,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspack.c openjd
 +    return FLOAT_SH(Float) | COLORSPACE_SH(ColorSpaceBits) | BYTES_SH(nBytes) | CHANNELS_SH(nOutputChans);
  }
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspcs.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmspcs.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspcs.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmspcs.c	2013-12-19 12:12:15.831239308 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspcs.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmspcs.c	2016-05-18 03:56:07.450736818 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -28582,7 +28583,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmspcs.c openjdk
 +}
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsplugin.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsplugin.c
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsplugin.c	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsplugin.c	2013-12-19 12:12:15.835239368 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsplugin.c	2016-05-18 03:56:07.450736818 +0100
 @@ -0,0 +1,641 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -29226,8 +29227,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsplugin.c open
 +    PluginPool = NULL;
 +}
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsps2.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsps2.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsps2.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsps2.c	2013-12-19 12:12:15.831239308 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsps2.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsps2.c	2016-05-18 03:56:07.450736818 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -31123,8 +31124,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsps2.c openjdk
 +
  }
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmssamp.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmssamp.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmssamp.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmssamp.c	2013-12-19 12:12:15.831239308 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmssamp.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmssamp.c	2016-05-18 03:56:07.450736818 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -31955,7 +31956,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmssamp.c openjd
  
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmssm.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmssm.c
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmssm.c	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmssm.c	2013-12-19 12:12:15.835239368 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmssm.c	2016-05-18 03:56:07.450736818 +0100
 @@ -0,0 +1,762 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -32721,7 +32722,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmssm.c openjdk/
 +#endif
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmstypes.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmstypes.c
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmstypes.c	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmstypes.c	2013-12-19 12:12:15.839239428 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmstypes.c	2016-05-18 03:56:07.454736753 +0100
 @@ -0,0 +1,4863 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -37587,8 +37588,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmstypes.c openj
 +}
 +
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c	2013-12-19 12:20:16.982448126 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c	2016-05-18 03:56:07.454736753 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -38676,7 +38677,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c openjd
  {
         cmsCIExyY       D65;
         cmsCIExyYTRIPLE Rec709Primaries = {
-@@ -744,38 +655,44 @@
+@@ -744,38 +656,44 @@
                                     {0.3000, 0.6000, 1.0},
                                     {0.1500, 0.0600, 1.0}
                                     };
@@ -38735,7 +38736,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c openjd
  {
      cmsCIELab LabIn, LabOut;
      cmsCIELCh LChIn, LChOut;
-@@ -813,116 +730,438 @@
+@@ -813,116 +731,438 @@
  // Creates an abstract profile operating in Lab space for Brightness,
  // contrast, Saturation and white point displacement
  
@@ -39227,8 +39228,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsvirt.c openjd
 +    return NULL;
  }
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmswtpnt.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmswtpnt.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmswtpnt.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmswtpnt.c	2013-12-19 12:12:15.831239308 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmswtpnt.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmswtpnt.c	2016-05-18 03:56:07.458736687 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -40028,8 +40029,8 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmswtpnt.c openj
 +    return TRUE;
  }
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsxform.c openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsxform.c
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsxform.c	2013-12-06 00:20:25.000000000 +0000
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsxform.c	2013-12-19 12:12:15.835239368 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsxform.c	2016-05-03 23:38:49.000000000 +0100
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/cmsxform.c	2016-05-18 03:56:07.458736687 +0100
 @@ -27,9 +27,10 @@
  // However, the following notice accompanied the original version of this
  // file:
@@ -42569,7 +42570,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/cmsxform.c openj
 +    return xform -> ContextID;
  }
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/icc34.h openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/icc34.h
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/icc34.h	2013-12-06 00:20:25.000000000 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/icc34.h	2016-05-03 23:38:49.000000000 +0100
 +++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/icc34.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,1023 +0,0 @@
 -/*
@@ -43597,7 +43598,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/icc34.h openjdk/
 -#endif /* ICC_H */
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2.h openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2.h
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2.h	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2.h	2013-12-19 12:12:15.843239488 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2.h	2016-05-18 03:56:07.462736622 +0100
 @@ -0,0 +1,1751 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -45352,7 +45353,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2.h openjdk/
 +#endif
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_internal.h openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_internal.h
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_internal.h	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_internal.h	2013-12-19 12:12:15.843239488 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_internal.h	2016-05-18 03:56:07.462736622 +0100
 @@ -0,0 +1,678 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -46034,7 +46035,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_internal.h
 +#endif
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_plugin.h openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_plugin.h
 --- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_plugin.h	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_plugin.h	2013-12-19 12:12:15.843239488 +0000
++++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_plugin.h	2016-05-18 03:56:07.462736622 +0100
 @@ -0,0 +1,562 @@
 +/*
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -46599,7 +46600,7 @@ diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms2_plugin.h o
 +#define _lcms_plugin_H
 +#endif
 diff -Nru openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms.h openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms.h
---- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms.h	2013-12-06 00:20:25.000000000 +0000
+--- openjdk.orig/jdk/src/share/native/sun/java2d/cmm/lcms/lcms.h	2016-05-03 23:38:49.000000000 +0100
 +++ openjdk/jdk/src/share/native/sun/java2d/cmm/lcms/lcms.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,2099 +0,0 @@
 -/*
