@@ -1,14 +1,6 @@
 diff -Nru openjdk.orig/hotspot/src/cpu/zero/vm/cppInterpreter_zero.cpp openjdk/hotspot/src/cpu/zero/vm/cppInterpreter_zero.cpp
 --- openjdk.orig/hotspot/src/cpu/zero/vm/cppInterpreter_zero.cpp	2016-05-03 20:18:13.388935986 +0100
 +++ openjdk/hotspot/src/cpu/zero/vm/cppInterpreter_zero.cpp	2016-05-03 20:19:21.099818351 +0100
-@@ -36,6 +36,7 @@
- #include "oops/oop.inline.hpp"
- #include "prims/jvmtiExport.hpp"
- #include "prims/jvmtiThreadState.hpp"
-+#include "prims/methodHandles.hpp"
- #include "runtime/arguments.hpp"
- #include "runtime/deoptimization.hpp"
- #include "runtime/frame.inline.hpp"
 @@ -65,6 +66,13 @@
    CALL_VM_NOCHECK_NOFIX(func)                   \
    fixup_after_potential_safepoint()

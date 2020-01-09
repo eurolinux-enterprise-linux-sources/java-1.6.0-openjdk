@@ -1,0 +1,29 @@
+# HG changeset patch
+# User chrisphi
+# Date 1392756328 0
+#      Tue Feb 18 20:45:28 2014 +0000
+# Node ID 0a9100ca5a41c8430aa9a51ef2ca5dd4d6f38322
+# Parent  c9da84d02a614d10d2118d7725b58b42b02fbbc3
+ARM32 assembler update for hsx24. Use ARM32JIT to turn it on/off.
+
+diff --git openjdk.orig/hotspot/make/linux/makefiles/zeroshark.make openjdk/hotspot/make/linux/makefiles/zeroshark.make
+--- openjdk.orig/hotspot/make/linux/makefiles/zeroshark.make
++++ openjdk/hotspot/make/linux/makefiles/zeroshark.make
+@@ -26,7 +26,8 @@
+ # Setup common to Zero (non-Shark) and Shark versions of VM
+ 
+ ifeq ($(ZERO_LIBARCH),arm)
+-
++# check to see if we are building the assembler jit or just zero.
++ifeq ($(ARM32JIT),true)
+ Obj_Files += asm_helper.o
+ Obj_Files += cppInterpreter_arm.o
+ Obj_Files += thumb2.o
+@@ -54,6 +55,7 @@
+ 	$(CXX_COMPILE) -DSTATIC_OFFSETS -o $@ $< $(COMPILE_DONE)
+ 
+ endif
++endif
+ 
+ %.o: %.S
+ 	@echo Assembling $<

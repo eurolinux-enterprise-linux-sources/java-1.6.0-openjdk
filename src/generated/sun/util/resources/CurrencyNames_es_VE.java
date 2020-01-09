@@ -6,7 +6,7 @@ public final class CurrencyNames_es_VE extends LocaleNamesBundle {
     protected final Object[][] getContents() {
         return new Object[][] {
             { "VEB", "Bs" },
-            { "VEF", "BsF." },
+            { "VEF", "Bs.F." },
         };
     }
 }

@@ -199,7 +199,10 @@ target_triplet = @target@
 @ENABLE_XRENDER_TRUE@	patches/openjdk/6961633-xrender-02.patch \
 @ENABLE_XRENDER_TRUE@	patches/openjdk/7018387-xrender_gc_leak.patch \
 @ENABLE_XRENDER_TRUE@	patches/openjdk/7150134-pr2662-xrender_drawline_oom.patch \
-@ENABLE_XRENDER_TRUE@	patches/openjdk/7105461-pr2662-xrender_jtables.patch
+@ENABLE_XRENDER_TRUE@	patches/openjdk/7105461-pr2662-xrender_jtables.patch \
+@ENABLE_XRENDER_TRUE@	patches/openjdk/6974985-pr3276-java2demo_exceptions.patch \
+@ENABLE_XRENDER_TRUE@	patches/openjdk/6985593-pr3276-maskblit_crash.patch \
+@ENABLE_XRENDER_TRUE@	patches/openjdk/8159495-pr3276-xrender_index_offsets.patch
 
 @ENABLE_SYSTEMTAP_TRUE@am__append_26 = patches/openjdk/7170638-systemtap.patch \
 @ENABLE_SYSTEMTAP_TRUE@	patches/hotspot/hs23/systemtap_gc.patch \
@@ -615,9 +618,9 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-OPENJDK_DATE = 22_aug_2016
-OPENJDK_SHA256SUM = 70ac61635032e77cecf935b53b22a9545d5d0a7f55ad6a15dca9b84a2be993be
-OPENJDK_VERSION = b40
+OPENJDK_DATE = 04_jan_2017
+OPENJDK_SHA256SUM = 8e34d451cec65fae8b4304651058ed4dc8d07bd45baa2f49780009097afc1a15
+OPENJDK_VERSION = b41
 OPENJDK_URL = https://java.net/downloads/openjdk6/
 CACAO_VERSION = 68fe50ac34ec
 CACAO_SHA256SUM = b8230f20d7022f9230bbfea13b2f3f179b2f42db40138ac6d32c82fc418ffc3a
@@ -993,11 +996,8 @@ ICEDTEA_PATCHES = $(DROP_PATCHES) $(SECURITY_PATCHES) \
 	patches/shark_fixes_from_8003868.patch \
 	patches/8003992_support_6.patch \
 	patches/shark-drop_compile_method_arg_following_7083786.patch \
-	patches/openjdk/7180907-jarsigner_sha-256.patch \
-	patches/openjdk/8049480-jarsigner_openjdk_9.patch \
 	patches/pr1904-icedtea_and_distro_versioning.patch \
 	patches/openjdk/8017173-xml_cipher_rsa_oaep_cant_be_instantiated.patch \
-	patches/openjdk/8000897-pr2173-vm_crash_in_compilebroker.patch \
 	patches/pr2070-type_punning_warnings.patch \
 	patches/pr2082-s390_type_fixes.patch \
 	patches/pr2096-4096-bit_dh.patch \
@@ -1048,7 +1048,8 @@ ICEDTEA_PATCHES = $(DROP_PATCHES) $(SECURITY_PATCHES) \
 	patches/pr3137-alt_button_order.patch \
 	patches/openjdk/6260348-pr3068.patch \
 	patches/openjdk/6961123-pr2975.patch \
-	patches/pr2800-missing_resources.patch $(am__append_21) \
+	patches/pr2800-missing_resources.patch \
+	patches/pr3213-conditional_arm32jit.patch $(am__append_21) \
 	$(am__append_22) $(am__append_23) $(am__append_24) \
 	$(am__append_25) $(am__append_26) $(am__append_27) \
 	$(am__append_28) $(am__append_29) $(am__append_30) \
@@ -1084,6 +1085,8 @@ ICEDTEA_NAME = IcedTea6
 @HAS_PKGVERSION_TRUE@ICEDTEA_PKG = $(EMPTY) (${PKGVERSION})
 @ENABLE_WERROR_FALSE@WERROR_STATUS = false
 @ENABLE_WERROR_TRUE@WERROR_STATUS = true
+@ENABLE_ARM32JIT_FALSE@ARM32JIT_STATUS = false
+@ENABLE_ARM32JIT_TRUE@ARM32JIT_STATUS = true
 ICEDTEA_UNSET = \
 	JAVAC= \
 	JAVA_HOME= \
@@ -1118,12 +1121,12 @@ ICEDTEA_ENV = ALT_JDK_IMPORT_PATH="$(BOOT_DIR)" ANT="$(ANT)" \
 	ALT_OUTPUTDIR="$(BUILD_OUTPUT_DIR)" STATIC_CXX="false" \
 	CC=$(CC)$(GCC_SUFFIX) CXX=$(CXX)$(GCC_SUFFIX) \
 	COMPILER_WARNINGS_FATAL="$(WERROR_STATUS)" \
-	UNLIMITED_CRYPTO="true" $(am__append_39) $(am__append_40) \
-	$(am__append_41) $(am__append_42) $(am__append_43) \
-	$(am__append_44) $(am__append_45) $(am__append_46) \
-	$(am__append_47) $(am__append_48) $(am__append_49) \
-	$(am__append_50) $(am__append_51) $(am__append_52) \
-	$(am__append_53)
+	UNLIMITED_CRYPTO="true" ARM32JIT="${ARM32JIT_STATUS}" \
+	$(am__append_39) $(am__append_40) $(am__append_41) \
+	$(am__append_42) $(am__append_43) $(am__append_44) \
+	$(am__append_45) $(am__append_46) $(am__append_47) \
+	$(am__append_48) $(am__append_49) $(am__append_50) \
+	$(am__append_51) $(am__append_52) $(am__append_53)
 
 # OpenJDK ecj build environment.
 ICEDTEA_ENV_ECJ = $(ICEDTEA_ENV) \
@@ -2350,7 +2353,7 @@ stamps/add-pulseaudio.stamp: stamps/icedtea.stamp $(PULSE_JAVA_TARGET)
 @ENABLE_PULSE_JAVA_TRUE@	cp -pPRf $(PULSE_JAVA_BUILDDIR)/pulse-java.jar \
 @ENABLE_PULSE_JAVA_TRUE@	  $(BUILD_OUTPUT_DIR)/j2re-image/lib/ext
 @ENABLE_PULSE_JAVA_TRUE@	(cd $(PULSE_JAVA_JAVA_SRCDIR) && \
-@ENABLE_PULSE_JAVA_TRUE@	   $(ZIP) -qur $(BUILD_OUTPUT_DIR)/j2sdk-image/src.zip org )
+@ENABLE_PULSE_JAVA_TRUE@	   $(ZIP) -qr $(BUILD_OUTPUT_DIR)/j2sdk-image/src.zip org )
 	touch $@
 
 # Note: for simplicity, we don't revert the update of src.zip
@@ -2371,7 +2374,7 @@ stamps/add-pulseaudio-debug.stamp: stamps/icedtea-debug.stamp $(PULSE_JAVA_TARGE
 @ENABLE_PULSE_JAVA_TRUE@	cp -pPRf $(PULSE_JAVA_BUILDDIR)/pulse-java.jar \
 @ENABLE_PULSE_JAVA_TRUE@	  $(DEBUG_BUILD_OUTPUT_DIR)/j2re-image/lib/ext
 @ENABLE_PULSE_JAVA_TRUE@	(cd $(PULSE_JAVA_JAVA_SRCDIR) && \
-@ENABLE_PULSE_JAVA_TRUE@	   $(ZIP) -qur $(DEBUG_BUILD_OUTPUT_DIR)/j2sdk-image/src.zip org )
+@ENABLE_PULSE_JAVA_TRUE@	   $(ZIP) -qr $(DEBUG_BUILD_OUTPUT_DIR)/j2sdk-image/src.zip org )
 	touch $@
 
 # Note: for simplicity, we don't revert the update of src.zip
@@ -2662,7 +2665,7 @@ stamps/add-pulseaudio-ecj.stamp: stamps/icedtea-ecj.stamp $(PULSE_JAVA_TARGET)
 @ENABLE_PULSE_JAVA_TRUE@	cp -pPRf $(PULSE_JAVA_BUILDDIR)/pulse-java.jar \
 @ENABLE_PULSE_JAVA_TRUE@	  $(ECJ_BUILD_OUTPUT_DIR)/j2re-image/lib/ext
 @ENABLE_PULSE_JAVA_TRUE@	(cd $(PULSE_JAVA_JAVA_SRCDIR) && \
-@ENABLE_PULSE_JAVA_TRUE@	   $(ZIP) -qur $(ECJ_BUILD_OUTPUT_DIR)/j2sdk-image/src.zip org )
+@ENABLE_PULSE_JAVA_TRUE@	   $(ZIP) -qr $(ECJ_BUILD_OUTPUT_DIR)/j2sdk-image/src.zip org )
 	touch $@
 
 # Note: for simplicity, we don't revert the update of src.zip

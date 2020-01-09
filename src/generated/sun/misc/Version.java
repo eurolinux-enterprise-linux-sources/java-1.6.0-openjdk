@@ -33,19 +33,19 @@ public class Version {
         "java";
 
     private static final String java_version =
-        "1.6.0_22";
+        "1.6.0_41";
 
     private static final String java_runtime_name =
         "OpenJDK Runtime Environment";
 
     private static final String java_runtime_version =
-        "1.6.0_22-b22";
+        "1.6.0_41-b41";
 
     private static final String jdk_derivative_name =
-        "IcedTea6 1.11pre+re32979d54978+d778bb012d22+";
+        "IcedTea6 1.14.0pre+r82b0055e8b18";
 
     private static final String distro_name =
-        "Fedora";
+        "Gentoo";
 
     private static final String distro_package_version =
         "";
@@ -294,15 +294,24 @@ public class Version {
                 jvm_minor_version = Character.digit(cs.charAt(2), 10);
                 jvm_micro_version = Character.digit(cs.charAt(4), 10);
                 cs = cs.subSequence(5, cs.length());
-                if (cs.charAt(0) == '_' && cs.length() >= 3 &&
-                    Character.isDigit(cs.charAt(1)) &&
-                    Character.isDigit(cs.charAt(2))) {
-                    int nextChar = 3;
+                if (cs.charAt(0) == '_' && cs.length() >= 3) {
+                    int nextChar = 0;
+                    if (Character.isDigit(cs.charAt(1)) &&
+                        Character.isDigit(cs.charAt(2)) &&
+                        Character.isDigit(cs.charAt(3)))
+                    {
+                        nextChar = 4;
+                    } else if (Character.isDigit(cs.charAt(1)) &&
+                        Character.isDigit(cs.charAt(2)))
+                    {
+                        nextChar = 3;
+                    }
+
                     try {
-                        String uu = cs.subSequence(1, 3).toString();
+                        String uu = cs.subSequence(1, nextChar).toString();
                         jvm_update_version = Integer.valueOf(uu).intValue();
-                        if (cs.length() >= 4) {
-                            char c = cs.charAt(3);
+                        if (cs.length() >= nextChar + 1) {
+                            char c = cs.charAt(nextChar);
                             if (c >= 'a' && c <= 'z') {
                                 jvm_special_version = Character.toString(c);
                                 nextChar++;

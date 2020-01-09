@@ -1,0 +1,41 @@
+# HG changeset patch
+# User aivanov
+# Date 1468330300 -10800
+#      Tue Jul 12 16:31:40 2016 +0300
+# Node ID bcd7f2459237d7edc725cf88cede673c906f9733
+# Parent  70bc733187569edf04e2d8480bdb01cb43ff4c36
+8159495, PR3276: Fix index offsets
+8140530, PR3276: Creating a VolatileImage with size 0,0 results in no longer working g2d.drawString
+Reviewed-by: prr, psadhukhan
+
+diff --git a/src/solaris/classes/sun/java2d/xr/XRPMBlitLoops.java b/src/solaris/classes/sun/java2d/xr/XRPMBlitLoops.java
+--- openjdk/jdk/src/solaris/classes/sun/java2d/xr/XRPMBlitLoops.java
++++ openjdk/jdk/src/solaris/classes/sun/java2d/xr/XRPMBlitLoops.java
+@@ -134,6 +134,9 @@
+             vImg = (SunVolatileImage) dst.getGraphicsConfig().createCompatibleVolatileImage(w, h, src.getTransparency());
+             vImg.setAccelerationPriority(1.0f);
+ 
++            if (!(vImg.getDestSurface() instanceof XRSurfaceData)) {
++                throw new InvalidPipeException("Could not create XRSurfaceData");
++            }
+             if (src.getTransparency() == SurfaceData.OPAQUE) {
+                 rgbTmpPM = new WeakReference<SunVolatileImage>(vImg);
+             } else {
+diff --git a/src/solaris/classes/sun/java2d/xr/XRSurfaceDataProxy.java b/src/solaris/classes/sun/java2d/xr/XRSurfaceDataProxy.java
+--- openjdk/jdk/src/solaris/classes/sun/java2d/xr/XRSurfaceDataProxy.java
++++ openjdk/jdk/src/solaris/classes/sun/java2d/xr/XRSurfaceDataProxy.java
+@@ -59,8 +59,12 @@
+     public SurfaceData validateSurfaceData(SurfaceData srcData,
+             SurfaceData cachedData, int w, int h) {
+         if (cachedData == null) {
+-            cachedData = XRSurfaceData.createData(xrgc, w, h, xrgc
+-                    .getColorModel(), null, 0, getTransparency());
++            try {
++                cachedData = XRSurfaceData.createData(xrgc, w, h,
++                                                      xrgc.getColorModel(), null, 0,
++                                                      getTransparency());
++            } catch (OutOfMemoryError oome) {
++            }
+         }
+         return cachedData;
+     }
