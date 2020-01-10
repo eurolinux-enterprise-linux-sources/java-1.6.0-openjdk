@@ -164,6 +164,7 @@ These are documented fully in the relevant section below.
   below.
 * --enable-lcms2: Use LCMS 2 backport from OpenJDK 7 rather than LCMS 1.
 * --enable-non-nss-curves: Define curves beyond the three specified by NSS (NIST P-{256,384,521})
+* --enable-arm32-jit: Build the ARM32 JIT.
 
 Testing
 =======
@@ -276,8 +277,9 @@ on any architecture supported by LLVM.  To enable it, pass the option
 --enable-shark to configure.  Please note that Shark is still in
 development and builds are still likely to fail at present.
 
-On ARM32, there is also a native JIT port built on top of Zero, which
-is built on this platform by default.
+On ARM32, there is also a native JIT port built on top of Zero. This
+currently has issues (see PR3196) and is thus not enabled by
+default. To enable it, pass --enable-arm32-jit to configure.
 
 Support for Different Versions of HotSpot
 =========================================

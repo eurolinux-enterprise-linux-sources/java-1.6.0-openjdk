@@ -7,10 +7,10 @@
 %define debug 0
 
 
-%define icedteaver 1.13.12
+%define icedteaver 1.13.13
 %define icedteasnapshot %{nil}
-%define openjdkver 40
-%define openjdkdate 22_aug_2016
+%define openjdkver 41
+%define openjdkdate 04_jan_2017
 
 %define genurl http://cvs.fedoraproject.org/viewcvs/devel/java-1.6.0-openjdk/
 
@@ -158,7 +158,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{buildver}
-Release: %{icedteaver}.9%{?dist}
+Release: %{icedteaver}.1%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -898,6 +898,19 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Wed Jan 04 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.41-1.13.13.1
+- Update to new 1.13.13 and b41 tarballs to correct TCK failure.
+- Resolves: rhbz#1381990
+
+* Tue Jan 03 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.41-1.13.13.0
+- Update to new 1.13.13 tarball with PR3275 and PR3276 fixes.
+- Resolves: rhbz#1381990
+
+* Tue Jan 03 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.41-1.13.13.0
+- Update to IcedTea 1.13.13 & OpenJDK 6 b41.
+- Fix context for rpath patch following PR3213.
+- Resolves: rhbz#1381990
+
 * Mon Sep 05 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.9
 - Require a JDK with RH1334465/PR2956 fixed and turn off bootstrapping for Zero architectures.
 - Resolves: rhbz#1350047

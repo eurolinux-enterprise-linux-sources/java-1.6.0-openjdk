@@ -1,3 +1,386 @@
+2017-01-04  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	S8172252: Remove over-zealous switch to for-each
+	loop in SortingFocusTraversalPolicy
+	* Makefile.am:
+	(OPENJDK_DATE): Bump to new b41 creation date;
+	4th of January, 2017.
+	(OPENJDK_SHA256SUM): Update for new b41 tarball.
+	* NEWS: Bump proposed release date and include
+	new fix for TCK failure.
+
+2017-01-03  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	PR3276: Backport latest XRender patches
+	* Makefile.am:
+	(ICEDTEA_PATCHES): Add new XRender fixes.
+	* NEWS: Updated.
+	* patches/openjdk/6974985-pr3276-java2demo_exceptions.patch,
+	* patches/openjdk/6985593-pr3276-maskblit_crash.patch,
+	* patches/openjdk/8159495-pr3276-xrender_index_offsets.patch:
+	Backported XRender fixes from OpenJDK 7.
+
+2017-01-03  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	PR3275: Update generated files after OpenJDK 6
+	b41 update
+	* NEWS: Updated.
+	* generated/com/sun/accessibility/internal/resources/accessibility.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_de.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_es.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_fr.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_it.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_ja.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_ko.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_pt_BR.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_sv.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_zh_CN.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_zh_HK.java,
+	* generated/com/sun/accessibility/internal/resources/accessibility_zh_TW.java,
+	* generated/com/sun/corba/se/impl/logging/ActivationSystemException.java,
+	* generated/com/sun/corba/se/impl/logging/IORSystemException.java,
+	* generated/com/sun/corba/se/impl/logging/InterceptorsSystemException.java,
+	* generated/com/sun/corba/se/impl/logging/NamingSystemException.java,
+	* generated/com/sun/corba/se/impl/logging/OMGSystemException.java,
+	* generated/com/sun/corba/se/impl/logging/ORBUtilSystemException.java,
+	* generated/com/sun/corba/se/impl/logging/POASystemException.java,
+	* generated/com/sun/corba/se/impl/logging/UtilSystemException.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_de.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_es.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_fr.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_it.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_ja.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_ko.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_pt_BR.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_sv.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_zh_CN.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_zh_HK.java,
+	* generated/com/sun/java/swing/plaf/gtk/resources/gtk_zh_TW.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_de.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_es.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_fr.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_it.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_ja.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_ko.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_pt_BR.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_sv.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_zh_CN.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_zh_HK.java,
+	* generated/com/sun/java/swing/plaf/motif/resources/motif_zh_TW.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_de.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_es.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_fr.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_it.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_ja.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_ko.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_pt_BR.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_sv.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_zh_CN.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_zh_HK.java,
+	* generated/com/sun/java/swing/plaf/windows/resources/windows_zh_TW.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_de.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_es.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_fr.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_it.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_ja.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_ko.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_pt_BR.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_sv.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_zh_CN.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_zh_HK.java,
+	* generated/com/sun/swing/internal/plaf/basic/resources/basic_zh_TW.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_de.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_es.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_fr.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_it.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_ja.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_ko.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_pt_BR.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_sv.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_zh_CN.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_zh_HK.java,
+	* generated/com/sun/swing/internal/plaf/metal/resources/metal_zh_TW.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_de.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_es.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_fr.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_it.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_ja.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_ko.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_pt_BR.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_sv.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_zh_CN.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_zh_HK.java,
+	* generated/com/sun/swing/internal/plaf/synth/resources/synth_zh_TW.java,
+	* generated/com/sun/tools/jdi/resources/jdi_ja.java,
+	* generated/com/sun/tools/jdi/resources/jdi_zh_CN.java,
+	* generated/java/lang/CharacterDataPrivateUse.java,
+	* generated/java/lang/CharacterDataUndefined.java,
+	* generated/java/lang/UNIXProcess.java,
+	* generated/java/nio/charset/CharsetEncoder.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_bw16_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_bw24_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_bw32_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_bw48_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_interim16_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_interim24_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_interim32_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_interim48_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_yellow16_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_yellow24_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_yellow32_png.java,
+	* generated/sun/awt/X11/XAWTIcon32_security_icon_yellow48_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_bw16_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_bw24_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_bw32_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_bw48_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_interim16_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_interim24_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_interim32_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_interim48_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_yellow16_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_yellow24_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_yellow32_png.java,
+	* generated/sun/awt/X11/XAWTIcon64_security_icon_yellow48_png.java,
+	* generated/sun/awt/X11/XkbAccessXNotifyEvent.java,
+	* generated/sun/awt/X11/XkbActionMessageEvent.java,
+	* generated/sun/awt/X11/XkbAnyEvent.java,
+	* generated/sun/awt/X11/XkbBellNotifyEvent.java,
+	* generated/sun/awt/X11/XkbCompatMapNotifyEvent.java,
+	* generated/sun/awt/X11/XkbControlsNotifyEvent.java,
+	* generated/sun/awt/X11/XkbEvent.java,
+	* generated/sun/awt/X11/XkbExtensionDeviceNotifyEvent.java,
+	* generated/sun/awt/X11/XkbIndicatorNotifyEvent.java,
+	* generated/sun/awt/X11/XkbMapNotifyEvent.java,
+	* generated/sun/awt/X11/XkbNamesNotifyEvent.java,
+	* generated/sun/awt/X11/XkbNewKeyboardNotifyEvent.java,
+	* generated/sun/awt/X11/XkbStateNotifyEvent.java,
+	* generated/sun/awt/X11/generator/sizer.64,
+	* generated/sun/awt/X11/generator/sizes.64,
+	* generated/sun/awt/resources/awt_de.java,
+	* generated/sun/awt/resources/awt_es.java,
+	* generated/sun/awt/resources/awt_fr.java,
+	* generated/sun/awt/resources/awt_it.java,
+	* generated/sun/awt/resources/awt_ja.java,
+	* generated/sun/awt/resources/awt_ko.java,
+	* generated/sun/awt/resources/awt_pt_BR.java,
+	* generated/sun/awt/resources/awt_sv.java,
+	* generated/sun/awt/resources/awt_zh_CN.java,
+	* generated/sun/awt/resources/awt_zh_HK.java,
+	* generated/sun/awt/resources/awt_zh_TW.java,
+	* generated/sun/management/resources/agent_de.java,
+	* generated/sun/management/resources/agent_es.java,
+	* generated/sun/management/resources/agent_fr.java,
+	* generated/sun/management/resources/agent_it.java,
+	* generated/sun/management/resources/agent_ja.java,
+	* generated/sun/management/resources/agent_ko.java,
+	* generated/sun/management/resources/agent_pt_BR.java,
+	* generated/sun/management/resources/agent_sv.java,
+	* generated/sun/management/resources/agent_zh_CN.java,
+	* generated/sun/management/resources/agent_zh_HK.java,
+	* generated/sun/management/resources/agent_zh_TW.java,
+	* generated/sun/misc/Version.java,
+	* generated/sun/nio/ch/AlreadyBoundException.java,
+	* generated/sun/print/resources/serviceui.java,
+	* generated/sun/print/resources/serviceui_de.java,
+	* generated/sun/print/resources/serviceui_es.java,
+	* generated/sun/print/resources/serviceui_fr.java,
+	* generated/sun/print/resources/serviceui_it.java,
+	* generated/sun/print/resources/serviceui_ja.java,
+	* generated/sun/print/resources/serviceui_ko.java,
+	* generated/sun/print/resources/serviceui_pt_BR.java,
+	* generated/sun/print/resources/serviceui_sv.java,
+	* generated/sun/print/resources/serviceui_zh_CN.java,
+	* generated/sun/print/resources/serviceui_zh_HK.java,
+	* generated/sun/print/resources/serviceui_zh_TW.java,
+	* generated/sun/tools/jar/resources/jar.java,
+	* generated/sun/tools/jar/resources/jar_de.java,
+	* generated/sun/tools/jar/resources/jar_es.java,
+	* generated/sun/tools/jar/resources/jar_fr.java,
+	* generated/sun/tools/jar/resources/jar_it.java,
+	* generated/sun/tools/jar/resources/jar_ja.java,
+	* generated/sun/tools/jar/resources/jar_ko.java,
+	* generated/sun/tools/jar/resources/jar_pt_BR.java,
+	* generated/sun/tools/jar/resources/jar_sv.java,
+	* generated/sun/tools/jar/resources/jar_zh_CN.java,
+	* generated/sun/tools/jar/resources/jar_zh_HK.java,
+	* generated/sun/tools/jar/resources/jar_zh_TW.java,
+	* generated/sun/tools/jconsole/Version.java,
+	* generated/sun/util/CoreResourceBundleControl.java,
+	* generated/sun/util/LocaleDataMetaInfo.java,
+	* generated/sun/util/logging/resources/logging_de.java,
+	* generated/sun/util/logging/resources/logging_es.java,
+	* generated/sun/util/logging/resources/logging_fr.java,
+	* generated/sun/util/logging/resources/logging_it.java,
+	* generated/sun/util/logging/resources/logging_ja.java,
+	* generated/sun/util/logging/resources/logging_ko.java,
+	* generated/sun/util/logging/resources/logging_pt_BR.java,
+	* generated/sun/util/logging/resources/logging_sv.java,
+	* generated/sun/util/logging/resources/logging_zh_CN.java,
+	* generated/sun/util/logging/resources/logging_zh_HK.java,
+	* generated/sun/util/logging/resources/logging_zh_TW.java,
+	* generated/sun/util/resources/CalendarData_hu.java,
+	* generated/sun/util/resources/CalendarData_pt_BR.java,
+	* generated/sun/util/resources/CalendarData_sl.java,
+	* generated/sun/util/resources/CurrencyNames.java,
+	* generated/sun/util/resources/CurrencyNames_de.java,
+	* generated/sun/util/resources/CurrencyNames_es.java,
+	* generated/sun/util/resources/CurrencyNames_es_CU.java,
+	* generated/sun/util/resources/CurrencyNames_es_PE.java,
+	* generated/sun/util/resources/CurrencyNames_es_VE.java,
+	* generated/sun/util/resources/CurrencyNames_et_EE.java,
+	* generated/sun/util/resources/CurrencyNames_fr.java,
+	* generated/sun/util/resources/CurrencyNames_it.java,
+	* generated/sun/util/resources/CurrencyNames_ja.java,
+	* generated/sun/util/resources/CurrencyNames_ko.java,
+	* generated/sun/util/resources/CurrencyNames_lt_LT.java,
+	* generated/sun/util/resources/CurrencyNames_lv_LV.java,
+	* generated/sun/util/resources/CurrencyNames_pt.java,
+	* generated/sun/util/resources/CurrencyNames_sk_SK.java,
+	* generated/sun/util/resources/CurrencyNames_sr_RS.java,
+	* generated/sun/util/resources/CurrencyNames_sv.java,
+	* generated/sun/util/resources/CurrencyNames_tr_TR.java,
+	* generated/sun/util/resources/CurrencyNames_uk_UA.java,
+	* generated/sun/util/resources/CurrencyNames_zh_CN.java,
+	* generated/sun/util/resources/CurrencyNames_zh_TW.java,
+	* generated/sun/util/resources/LocaleNames.java,
+	* generated/sun/util/resources/LocaleNames_de.java,
+	* generated/sun/util/resources/LocaleNames_es.java,
+	* generated/sun/util/resources/LocaleNames_fr.java,
+	* generated/sun/util/resources/LocaleNames_it.java,
+	* generated/sun/util/resources/LocaleNames_ja.java,
+	* generated/sun/util/resources/LocaleNames_ko.java,
+	* generated/sun/util/resources/LocaleNames_nl.java,
+	* generated/sun/util/resources/LocaleNames_sv.java,
+	* generated/sun/util/resources/LocaleNames_zh.java,
+	* generated/sun/util/resources/LocaleNames_zh_TW.java:
+	Update existing files and add new ones (notably
+	the pt_BR localisation).
+	* scripts/update_generated.sh:
+	Script to automate updating the generated files.
+
+2017-01-02  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* NEWS: Set provisional release date of the 4th.
+	* configure.ac: Bump to 1.13.13.
+
+2016-12-31  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	Update to b41 tarball.
+	* Makefile.am:
+	(OPENJDK_DATE): Bump to b41 creation date;
+	31st of December, 2016.
+	(OPENJDK_SHA256SUM): Update for b41 tarball.
+
+2016-12-30  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	Update to b41.
+	* patches/openjdk/7180907-jarsigner_sha-256.patch,
+	* patches/openjdk/8000897-pr2173-vm_crash_in_compilebroker.patch,
+	* patches/openjdk/8049480-jarsigner_openjdk_9.patch,
+	* patches/openjdk/8078628-pr3152-zero_pch_failure.patch,
+	* patches/openjdk/8169448-pr3205-pch_failure.patch:
+	Removed; upstreamed.
+	* Makefile.am:
+	(ICEDTEA_PATCHES): Remove upstreamed patches.
+	* NEWS: Updated.
+	* patches/hotspot/hs23/zero_fixes.patch:
+	Remove methodHandles.hpp fragment applied in 8078628/PR3152.
+	* patches/nomotif-6706121.patch,
+	* patches/windows-awt.patch: Regenerated.
+
+2016-08-25  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* Makefile.am:
+	(OPENJDK_VERSION): Bump to next release, b41.
+
+2016-12-29  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR3213: Disable ARM32 JIT by default
+	* Makefile.am:
+	(ICEDTEA_PATCHES): Add patch.
+	* patches/pr3213-conditional_arm32jit.patch:
+	Backport conditionalisation of ARM32 JIT port
+	from IcedTea 2.x.
+
+2014-02-19  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR3213: Disable ARM32 JIT by default
+	* INSTALL:
+	Document ARM32 JIT and --enable-arm32-jit option.
+	* Makefile.am:
+	(ARM32JIT_STATUS): Set based on ENABLE_ARM32JIT.
+	(ICEDTEA_ENV): Pass ARM32JIT to OpenJDK build,
+	using value of ${ARM32JIT_STATUS}.
+	* NEWS: Updated.
+	* acinclude.m4:
+	(IT_ENABLE_ARM32JIT): Allow the ARM32 JIT to be
+	enabled.
+	* configure.ac: Invoke IT_ENABLE_ARM32JIT macro.
+
+2016-08-19  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR3175: invalid zip timestamp handling leads to
+	error updating JAR files
+	* AUTHORS: Add Ricardo Ribalda.
+	* NEWS: Updated.
+
+2016-08-19  Ricardo Ribalda  <ricardo.ribalda@gmail.com>
+
+	PR3175: invalid zip timestamp handling leads to
+	error updating JAR files
+	* Makefile.am:
+	(add-pulseaudio): Don't use -u so files are always
+	overwritten, regardless of timestamps.
+	(add-pulseaudio-debug): Likewise.
+	(add-pulseaudio-ecj): Likewise.
+
+2016-12-28  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR3174: systemtap: type definition 'symbolOopDesc' not found
+	* NEWS: Updated
+
+2012-03-16  Mark Wielaard  <mjw@redhat.com>
+
+	PR3174: systemtap: type definition 'symbolOopDesc' not found
+	* tapset/jstack.stp.in: Change symbolOopDesc to Symbol to accomodate
+	S6990754 - Use native memory and reference counting to implement
+	SymbolTable.
+
+2016-12-28  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR3152: Zero build fails with pch disabled
+	* Makefile.am:
+	(ICEDTEA_PATCHES): Add new patch.
+	* NEWS: Updated.
+	* patches/openjdk/8078628-pr3152-zero_pch_failure.patch:
+	Backport patch from b41 to fix Zero build failure when
+	building without pre-compiled headers.
+
+2016-12-23  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR3205: Builds fails with pch disabled
+	* Makefile.am:
+	(ICEDTEA_PATCHES): Add new patch.
+	* NEWS: Updated.
+	* patches/openjdk/8169448-pr3205-pch_failure.patch:
+	Backport patch from b41 to fix build failure when
+	building without pre-compiled headers.
+
+2016-08-24  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* NEWS: Add 1.13.13 section.
+	* configure.ac: Bump to 1.13.13pre.
+
+2016-08-24  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* NEWS: Updated following tarball updates.
+
 2016-08-22  Andrew John Hughes  <gnu.andrew@redhat.com>
 
 	* Makefile.am:

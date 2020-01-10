@@ -5,15 +5,15 @@ import java.util.ListResourceBundle;
 public final class logging_it extends ListResourceBundle {
     protected final Object[][] getContents() {
         return new Object[][] {
-            { "ALL", "TUTTO" },
+            { "ALL", "ALL" },
             { "CONFIG", "CONFIG" },
             { "FINE", "FINE" },
-            { "FINER", "MOLTO FINE" },
-            { "FINEST", "FINISSIMO" },
+            { "FINER", "FINER" },
+            { "FINEST", "FINEST" },
             { "INFO", "INFO" },
             { "OFF", "OFF" },
-            { "SEVERE", "GRAVE" },
-            { "WARNING", "AVVERTENZA" },
+            { "SEVERE", "SEVERE" },
+            { "WARNING", "WARNING" },
         };
     }
 }

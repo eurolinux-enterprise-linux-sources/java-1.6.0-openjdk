@@ -12,6 +12,195 @@ JEPX - http://openjdk.java.net/jeps/X
 
 CVE-XXXX-YYYY: http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=XXXX-YYYY
 
+New in release 1.13.13 (2017-01-09):
+
+* Security fixes
+  - S8151921: Improved page resolution
+  - S8155968: Update command line options
+  - S8155973, CVE-2016-5542: Tighten jar checks
+  - S8157176: Improved classfile parsing
+  - S8157739, CVE-2016-5554: Classloader Consistency Checking
+  - S8157749: Improve handling of DNS error replies
+  - S8157753: Audio replay enhancement
+  - S8158302: Handle contextual glyph substitutions
+  - S8158993, CVE-2016-5568: Service Menu services
+  - S8159495, PR3276: Fix index offsets
+  - S8159503: Amend Annotation Actions
+  - S8159511: Stack map validation
+  - S8159515: Improve indy validation
+  - S8159519, CVE-2016-5573: Reformat JDWP messages
+  - S8160090: Better signature handling in pack200
+  - S8160094: Improve pack200 layout
+  - S8160591, CVE-2016-5582: Improve internal array handling
+  - S8160838, CVE-2016-5597: Better HTTP service
+* Import of OpenJDK6 b41
+  - S4787377: VK_STOP key on Solaris generates wrong Key Code
+  - S4947220: (process)Runtime.exec() cannot invoke applications with unicode parameters(win)
+  - S5036807: Pressing action keys "STOP/AGAIN/COMPOSE" generates keycode of F11/F12 keys.
+  - S5099725: AWT doesn't seem to handle MappingNotify events under X11.
+  - S5100701: Toolkit.getLockingKeyState() does not work on XToolkit, but works on Motif
+  - S6324292: keytool -help is unhelpful
+  - S6464022: Memory leak in JOptionPane.createDialog
+  - S6501385: ColorChooser demo - two elemets have same mnemonic in it locale, GTK L&F
+  - S6535697: keytool can be more flexible on format of PEM-encoded X.509 certificates
+  - S6561126: keytool should use larger default keysize for keypairs
+  - S6566218: l10n of 6476932
+  - S6606396: Notepad and Stylepad demos don't run in Japanese locale.
+  - S6608456: need API to define RepaintManager per components hierarchy
+  - S6624200: Regression test fails: test/closed/javax/swing/JMenuItem/4654927/bug4654927.java
+  - S6675400: "Details" in English has to be "Details" in German
+  - S6680988: KeyEvent is still missing VK values for many keyboards
+  - S6683775: Painting artifacts is seen when panel is made setOpaque(false) for a translucent window
+  - S6693507: There are unnecessary compilation warnings in the com.sun.java.swing.plaf.motif package
+  - S6709758: keytool default cert fingerprint algorithm should be SHA1, not MD5
+  - S6711676: Numpad keys trigger more than one KeyEvent.
+  - S6719382: Printing of AWT components on windows is not working
+  - S6726866: Repainting artifacts when resizing or dragging JInternalFrames in non-opaque toplevel
+  - S6727661: Code improvement and warnings removing from the swing/plaf packages
+  - S6727662: Code improvement and warnings removing from swing packages
+  - S6794764: Translucent windows are completely repainted on every paint event, on Windows
+  - S6796710: Html content in JEditorPane is overlapping on swing components while resizing the application. [TEST FRAMEWORK ONLY]
+  - S6802846: jarsigner needs enhanced cert validation(options)
+  - S6867657: Many JSN tests do not run under cygwin
+  - S6870812: enhance security tools to use ECC algorithms
+  - S6871299: Shift+Tab no longer generates a KEY_TYPED event; used to with JRE 1.5
+  - S6871847: AlgorithmId.get("SHA256withECDSA") not available
+  - S6882559: new JEditorPane("text/plain","") fails for null context class loader
+  - S6894719: (launcher)The option -no-jre-restrict-search is expected when -jre-no-restrict-search is documented.
+  - S6901170: HttpCookie parsing of version and max-age mis-handled
+  - S6911129: These tests do not work with CYGWIN: java/lang
+  - S6922482: keytool's help on -file always shows 'output file'
+  - S6923681: Jarsigner crashes during timestamping
+  - S6939248: Jarsigner can't extract Extended Key Usage from Timestamp Reply correctly
+  - S6959252: convert the anonymous arrays to named arrays in Java List Resource files
+  - S6969683: Generify ResolverConfiguration codes
+  - S6980510: Fix for 6959252 broke JConsole mnemonic keys
+  - S6982840: sun/security/tools/jarsigner/emptymanifest.sh fails
+  - S6987827: security/util/Resources.java needs improvement
+  - S6988163: sun.security.util.Resources dup and a keytool doc typo
+  - S7004168: jarsigner -verify checks for KeyUsage codesigning ext on all certs instead of just signing cert
+  - S7013850: Please change the mnemonic assignment system to avoid translation issue
+  - S7017818: NLS: JConsoleResources.java cannot be handled by translation team
+  - S7019937: Translatability bug - Remove Unused String - String ID , read end of file
+  - S7019938: Translatability bug - Remove Unused String - String ID can not specify Principal with a
+  - S7019940: Translatability bug - Remove unused string - String ID: provided null name
+  - S7019942: Translatability bug - String ID: trustedCertEntry,
+  - S7019945: Translatability bug - Translatability issue - String ID: * has NOT been verified! In order to veri
+  - S7019947: Translatability bug - Translatability issue - String ID: * The integrity of the information stored i
+  - S7019949: Translatability bug - Translatability issue - String ID: * you must provide your keystore password.
+  - S7020531: test: java/security/cert/CertificateFactory/openssl/OpenSSLCert.java file not closed after run
+  - S7021693: [ja, zh_CN] jconsole throws exception and fail to start in ja and zh_CN locales
+  - S7022005: [ja,zh_CN] javadoc, part of navigation bar in generated html are not translated.
+  - S7024118: possible hardcoded mnemonic for JFileChooser metal and motif l&f
+  - S7025267: NLS: t13y fix for 7021689 [ja] Notepad demo throws NPE
+  - S7028447: security-related resources Chinese translation errors
+  - S7028490: better suggestion for jarsigner when TSA is not accessible
+  - S7030174: Jarsigner should accept TSACert with an HTTPS id-ad-timeStamping SIA
+  - S7032018: The file list in JFileChooser does not have an accessible name
+  - S7032436: When running with the Nimbus look and feel, the JFileChooser does not display mnemonics
+  - S7034259: [all] incorrect mnemonic keys in JCP automatic update advanced settings dialog.
+  - S7034940: message drop 2 translation integration
+  - S7035843: [zh_CN, ja] JConsole mnemonic keys don't work
+  - S7038803: [CCJK] Incorrect mnemonic key (0) is displayed on cancel button on messagedialog of JOptionPane
+  - S7038807: [CCJK] OK button on message dialog of JOptionpane is not translated
+  - S7040228: [zh_TW] extra (C) on cancel button on File Chooser dialog
+  - S7040257: [pt_BR,fr] Print dialog has duplicate mnemonic key.
+  - S7042323: [sv, de, es, it] Print dialog has duplicate mnemonic key
+  - S7042475: [ja,zh_CN] extra mnemonic key in jconsole
+  - S7043548: message drop 3 translation integration
+  - S7045132: sun.security.util.Resources_pt_BR.java translation error
+  - S7045184: GTK L&F doesn't have hotkeys in jdk7 b141, while b139 has.
+  - S7062969: java -help still shows http://java.sun.com/javase/reference
+  - S7090158: Networking Libraries don't build with javac -Werror
+  - S7090832: Some locale info are not localized for some languages.
+  - S7093156: NLS Please change the mnemonic assignment system to avoid translation issue (Swing files)
+  - S7102686: Restructure timestamp code so that jars and modules can more easily share the same code
+  - S7109085: Test use hotkeys not intended for Mac
+  - S7116786: RFE: Detailed information on VerifyErrors
+  - S7124171: 7u4 l10n message update related to Mac OS X port
+  - S7125055: ContentHandler.getContent API changed in error
+  - S7132247: java/rmi/registry/readTest/readTest.sh failing with Cygwin
+  - S7142339: PKCS7.java is needlessly creating SHA1PRNG SecureRandom instances when timestamping is not done
+  - S7145375: 7u4 l10n message update related to langtools
+  - S7145960: sun/security/mscapi/ShortRSAKey1024.sh failing on windows
+  - S7146099: NLS: [de,es,it,ko,pt_BR]launcher_**.properties, double backslash issue.
+  - S7149012: jarsigner needs not warn about cert expiration if the jar has a TSA timestamp
+  - S7158712: Synth Property "ComboBox.popupInsets" is ignored
+  - S7169226: NLS: Please change the mnemonic assignment system for windows and motif properties
+  - S7174970: NLS [ccjk] Extra mnemonic keys at standard filechooserdialog (open and save) in metal L&F
+  - S7175367: NLS: 7u6 message drop10 integration
+  - S7176894: back out LocaleNames_xx.properties files from 7u6 message drop10
+  - S7178145: Change constMethodOop::_exception_table to optionally inlined u2 table.
+  - S7181632: nsk classLoad001_14 failure and CompileTheWorld crash after 7178145.
+  - S7182226: NLS: jdk7u6 message drop20 integration
+  - S7183203: ShortRSAKeynnn.sh tests intermittent failure
+  - S7187051: ShortRSAKeynnn.sh tests should do cleanup before start test
+  - S7194449: String resources for Key Tool and Policy Tool should be in their respective packages
+  - S8000626: Implement dead key detection for KeyEvent on Linux
+  - S8003890: corelibs test scripts should pass TESTVMOPTS
+  - S8008764: 7uX l10n resource file translation update
+  - S8009168: accessibility.properties syntax issue
+  - S8009636: JARSigner including TimeStamp PolicyID (TSAPolicyID) as defined in RFC3161
+  - S8010297: Missing isLoggable() checks in logging code
+  - S8010782: clean up source files containing carriage return characters
+  - S8014048: Online user guide of jconsole points incorrect link
+  - S8014431: cleanup warnings indicated by the -Wunused-value compiler option on linux
+  - S8015265: revise the fix for 8007037
+  - S8016579: (process) IOException thrown by ProcessBuilder.start() method is incorrectly encoded
+  - S8019541: 7u40 l10n resource file translation update
+  - S8020708: NLS mnemonics missing in SwingSet2/JInternalFrame demo
+  - S8023338: Update jarsigner to encourage timestamping
+  - S8024302: Clarify jar verifications
+  - S8024756: method grouping tabs are not selectable
+  - S8026741: jdk8 l10n resource file translation update 5
+  - S8027787: 7u51 l10n resource file translation update 1
+  - S8030698: Several GUI labels in jconsole need correction
+  - S8030878: JConsole issues meaningless message if SSL connection fails
+  - S8035988: 7u60 l10n resource file translation update 1
+  - S8038837: Add support to jarsigner for specifying timestamp hash algorithm
+  - S8048147: Privilege tests with JAAS Subject.doAs
+  - S8048357: PKCS basic tests
+  - S8049171: Additional tests for jarsigner's warnings
+  - S8055176: 7u71 l10n resource file translation update
+  - S8057530: (process) Runtime.exec throws garbled message in jp locale
+  - S8059177: jdk8u40 l10n resource file translation update 1
+  - S8065609: 7u76 l10n resource file translation update
+  - S8076486: [TESTBUG] javax/security/auth/Subject/doAs/NestedActions.java fails if extra VM options are given
+  - S8077953: [TEST_BUG] com/sun/management/OperatingSystemMXBean/TestTotalSwap.java Compilation failed after JDK-8077387
+  - S8078628, PR3152: Zero build fails with pre-compiled headers disabled
+  - S8080628: No mnemonics on Open and Save buttons in JFileChooser
+  - S8083601: jdk8u60 l10n resource file translation update 2
+  - S8140530, PR3276: Creating a VolatileImage with size 0,0 results in no longer working g2d.drawString
+  - S8142926: OutputAnalyzer's shouldXXX() calls return this
+  - S8143134: L10n resource file translation update
+  - S8147077: IllegalArgumentException thrown by api/java_awt/Component/FlipBufferStrategy/indexTGF_General
+  - S8148127: IllegalArgumentException thrown by JCK test api/java_awt/Component/FlipBufferStrategy/indexTGF_General in opengl pipeline
+  - S8150611: Security problem on sun.misc.resources.Messages*
+  - S8157077: 8u101 L10n resource file updates
+  - S8157653: [Parfait] Uninitialised variable in awt_Font.cpp
+  - S8158734: JEditorPane.createEditorKitForContentType throws NPE after 6882559
+  - S8159684: (tz) Support tzdata2016f
+  - S8162411: Service Menu services 2
+  - S8162419: closed/com/oracle/jfr/runtime/TestVMInfoEvent.sh failing after JDK-8155968
+  - S8162511: 8u111 L10n resource file updates
+  - S8162792: Remove constraint DSA keySize < 1024 from jdk.jar.disabledAlgorithms in jdk8
+  - S8164452: 8u111 L10n resource file update - msgdrop 20
+  - S8165816: jarsigner -verify shows jar unsigned if it was signed with a weak algorithm
+  - S8166381: Back out changes to the java.security file to not disable MD5
+  - S8169448, PR3205: OpenJDK 6 fails to build without pre-compiled headers
+  - S8171415: Remove Java 7 features from testlibrary
+  - S8171954: Add stubs for sun.security.tools.KeyTool and sun.security.tools.JarSigner
+  - S8172159: Remove @Override annotation on interfaces added by b41 updates
+  - S8172252: Remove over-zealous switch to for-each loop in SortingFocusTraversalPolicy
+* Backports
+  - S6974985, PR3276: Java2Demo threw exceptions when xrender enabled in OEL5.5
+  - S6985593, PR3276: Crash in Java_sun_java2d_loops_MaskBlit_MaskBlit on oel5.5-x64
+* Bug fixes
+  - PR3174: systemtap: type definition 'symbolOopDesc' not found
+  - PR3175: invalid zip timestamp handling leads to error updating JAR files
+  - PR3213: Disable ARM32 JIT by default
+  - PR3275: Update generated files after OpenJDK 6 b41 update
+
 New in release 1.13.12 (2016-08-24):
 
 * Security fixes
@@ -27,23 +216,31 @@ New in release 1.13.12 (2016-08-24):
 * Import of OpenJDK6 b40
   - S6496269: Many warnings generated from com/sun/java/util/jar/pack/*.cpp when compiled on Linux
   - S6522789: [zh_CN] translation of "enclosing class" in doclet is incorrect
+  - S6575373: Error verifying signatures of pack200 files in some cases [TEST ONLY]
   - S6579775: l10n update after 6212566
   - S6600143: Remove another 450 unnecessary casts
   - S6611629: Avoid hardcoded cygwin paths for memory detection
   - S6690018: RSAClientKeyExchange NullPointerException
+  - S6712743: pack200: should default to 150.7 pack format for classfiles without any classes.
   - S6714842: CertPathBuilder returns incorrect CertPath for BasicConstraints in builderParams
   - S6726309: Compiler warnings in nio code
   - S6727683: Cleanup use of COMPILER_WARNINGS_FATAL in makefiles
   - S6755847: (launcher) will trigger assertions in debug build
+  - S6852744: PIT b61: PKI test suite fails because self signed certificates are being rejected
+  - S6858127: Missing -DNDEBUG on Linux and Windows native code compiles
   - S6864028: Update the java launcher to use the new entry point JVM_FindClassFromBootLoader
   - S6875904: Java 7 message synchronization 1
   - S6882437: CertPath/X509CertPathDiscovery/Test fails on jdk7/pit/b62
   - S6888127: java.util.jar.Pack200.Packer Memory Leak
   - S6888925: SunMSCAPI's Cipher can't use RSA public keys obtained from other sources.
   - S6889552: Sun provider should not require LDAP CertStore to be present
+  - S6941936: Broken pipe error of test case DNSIdentities.java [Test only]
   - S6951599: Rename package of security tools for modularization
   - S6953295: Move few sun.security.{util, x509, pkcs} classes used by keytool/jarsigner to another package
   - S6958026: Problem with PKCS12 keystore
+  - S6966737: (pack200) the pack200 regression tests need to be more robust.
+  - S6982312: (pack200) pack200 fails with the jdk7 class files
+  - S6985763: Pack200.Packer.pack(...) and Pack200.Unpacker.unpack(...) throw unspecified exceptions
   - S6990106: FindBugs scan - Malicious code vulnerability Warnings in com.sun.java.util.jar.pack.*
   - S6994413: JDK_GetVersionInfo0 only expects a two digit build number
   - S7000752: Duplicate entry in RowSetResourceBundles.properties
@@ -56,6 +253,7 @@ New in release 1.13.12 (2016-08-24):
   - S7023416: (pack200) fix parfait issues
   - S7029680: fix test/sun/misc/Version/Version.java build parsing
   - S7038175: Expired PKITS certificates causing CertPathBuilder and CertPathValidator regression test failures
+  - S7050826, PR2956, RH1334465: Hebrew characters are not rendered on OEL 5.6
   - S7055363: jdk_security3 test target cleanup
   - S7060849: Eliminate pack200 build warnings
   - S7064075: Security libraries don't build with javac -Xlint:all,-deprecation -Werror
@@ -103,11 +301,13 @@ New in release 1.13.12 (2016-08-24):
   - S8162828: Sync imageioJPEG.c with initial OpenJDK 7 version
   - S8163022, PR2954: Remove @Override annotation on interfaces added by 2016/04 security fixes
   - S8164181: Remove @Override annotation on interfaces added by 2016/07 security fixes
+  - S8164426: Normalise whitespace in src/share/classes/com/sun/java/util/jar/pack
+  - S8164554: test/sun/security/provider/certpath/X509CertPath/IllegalCertiticates.java still failing
+  - S8164555: pack200: Leave ZipFile open on exceptions
 * Backports
   - S2178143, PR2959: JVM crashes if the number of bound CPUs changed during runtime
   - S6260348, PR3068: GTK+ L&F JTextComponent not respecting desktop caret blink rate
   - S6961123, PR2975: setWMClass fails to null-terminate WM_CLASS string
-  - S7050826, PR2956, RH1334465: Hebrew characters are not rendered on OEL 5.6
 * Bug fixes
   - PR2800: Files are missing from resources.jar
   - PR2954: ecj/override.patch is missing new @Overrides in RMIJRMPServerImpl.java

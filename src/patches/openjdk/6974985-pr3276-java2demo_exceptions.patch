@@ -1,0 +1,107 @@
+# HG changeset patch
+# User ceisserer
+# Date 1299019793 28800
+#      Tue Mar 01 14:49:53 2011 -0800
+# Node ID bbbf427a9007d55bb07aa4b2174b7c8069968a51
+# Parent  196d6e80272154fe6f5855092be9cc176a366e59
+6974985, PR3276: Java2Demo threw exceptions when xrender enabled in OEL5.5
+Reviewed-by: prr
+
+diff --git a/make/sun/awt/mapfile-mawt-vers b/make/sun/awt/mapfile-mawt-vers
+--- openjdk/jdk/make/sun/awt/mapfile-mawt-vers
++++ openjdk/jdk/make/sun/awt/mapfile-mawt-vers
+@@ -424,6 +424,7 @@
+ 		Java_sun_java2d_xr_XRSurfaceData_initXRPicture;
+ 		Java_sun_java2d_xr_XRSurfaceData_initIDs;
+ 		Java_sun_java2d_xr_XRSurfaceData_XRInitSurface;
++		Java_sun_java2d_xr_XRSurfaceData_freeXSDOPicture;
+ 		Java_sun_java2d_xr_XRBackendNative_initIDs;
+ 		Java_sun_java2d_xr_XIDGenerator_bufferXIDs;
+ 		Java_sun_java2d_xr_XRBackendNative_freeGC;
+diff --git a/make/sun/xawt/mapfile-vers b/make/sun/xawt/mapfile-vers
+--- openjdk/jdk/make/sun/xawt/mapfile-vers
++++ openjdk/jdk/make/sun/xawt/mapfile-vers
+@@ -374,6 +374,7 @@
+         Java_sun_java2d_xr_XRSurfaceData_initXRPicture;
+         Java_sun_java2d_xr_XRSurfaceData_initIDs;
+         Java_sun_java2d_xr_XRSurfaceData_XRInitSurface;
++	Java_sun_java2d_xr_XRSurfaceData_freeXSDOPicture;
+ 	Java_sun_java2d_xr_XRBackendNative_initIDs;
+ 	Java_sun_java2d_xr_XRBackendNative_freeGC;
+ 	Java_sun_java2d_xr_XRBackendNative_createGC;
+diff --git a/src/solaris/classes/sun/java2d/xr/XRSurfaceData.java b/src/solaris/classes/sun/java2d/xr/XRSurfaceData.java
+--- openjdk/jdk/src/solaris/classes/sun/java2d/xr/XRSurfaceData.java
++++ openjdk/jdk/src/solaris/classes/sun/java2d/xr/XRSurfaceData.java
+@@ -55,6 +55,8 @@
+ 
+     native void initXRPicture(long xsdo, int pictForm);
+ 
++    native void freeXSDOPicture(long xsdo);
++
+     public static final String DESC_BYTE_A8_X11 = "Byte A8 Pixmap";
+     public static final String DESC_INT_RGB_X11 = "Integer RGB Pixmap";
+     public static final String DESC_INT_ARGB_X11 = "Integer ARGB-Pre Pixmap";
+@@ -531,6 +533,17 @@
+         public Object getDestination() {
+             return peer.getTarget();
+         }
++
++       public void invalidate() {
++           try {
++               SunToolkit.awtLock();
++               freeXSDOPicture(getNativeOps());
++           }finally {
++               SunToolkit.awtUnlock();
++           }
++
++           super.invalidate();
++       }
+     }
+ 
+     public static class XRInternalSurfaceData extends XRSurfaceData {
+diff --git a/src/solaris/native/sun/java2d/x11/X11SurfaceData.c b/src/solaris/native/sun/java2d/x11/X11SurfaceData.c
+--- openjdk/jdk/src/solaris/native/sun/java2d/x11/X11SurfaceData.c
++++ openjdk/jdk/src/solaris/native/sun/java2d/x11/X11SurfaceData.c
+@@ -375,6 +375,12 @@
+     AWT_LOCK();
+ 
+     xsdo->invalid = JNI_TRUE;
++
++    if (xsdo->xrPic != None) {
++        XRenderFreePicture(awt_display, xsdo->xrPic);
++        xsdo->xrPic = None;
++     }
++
+     if (xsdo->isPixmap == JNI_TRUE && xsdo->drawable != 0) {
+ #ifdef MITSHM
+         if (xsdo->shmPMData.shmSegInfo != NULL) {
+diff --git a/src/solaris/native/sun/java2d/x11/XRSurfaceData.c b/src/solaris/native/sun/java2d/x11/XRSurfaceData.c
+--- openjdk/jdk/src/solaris/native/sun/java2d/x11/XRSurfaceData.c
++++ openjdk/jdk/src/solaris/native/sun/java2d/x11/XRSurfaceData.c
+@@ -114,3 +114,26 @@
+     XShared_initSurface(env, xsdo, depth, width, height, drawable);
+ #endif /* !HEADLESS */
+ }
++
++
++
++JNIEXPORT void JNICALL
++Java_sun_java2d_xr_XRSurfaceData_freeXSDOPicture(JNIEnv *env, jobject xsd,
++                                                  jlong pXSData)
++{
++#ifndef HEADLESS
++    X11SDOps *xsdo;
++
++    J2dTraceLn(J2D_TRACE_INFO, "in XRSurfaceData_freeXSDOPicture");
++
++    xsdo = X11SurfaceData_GetOps(env, xsd);
++    if (xsdo == NULL) {
++        return;
++    }
++
++    if(xsdo->xrPic != None) {
++       XRenderFreePicture(awt_display, xsdo->xrPic);
++       xsdo->xrPic = None;
++    }
++#endif /* !HEADLESS */
++}
