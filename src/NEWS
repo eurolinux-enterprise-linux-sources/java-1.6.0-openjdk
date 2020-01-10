@@ -12,6 +12,118 @@ JEPX - http://openjdk.java.net/jeps/X
 
 CVE-XXXX-YYYY: http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=XXXX-YYYY
 
+New in release 1.13.12 (2016-08-24):
+
+* Security fixes
+  - S8079718, CVE-2016-3458: IIOP Input Stream Hooking
+  - S8145446, CVE-2016-3485: Perfect pipe placement (Windows only)
+  - S8147771: Construction of static protection domains under Javax custom policy
+  - S8148872, CVE-2016-3500: Complete name checking
+  - S8149962, CVE-2016-3508: Better delineation of XML processing
+  - S8150752: Share Class Data
+  - S8151925: Font reference improvements
+  - S8152479, CVE-2016-3550: Coded byte streams
+  - S8155981, CVE-2016-3606: Bolster bytecode verification
+* Import of OpenJDK6 b40
+  - S6496269: Many warnings generated from com/sun/java/util/jar/pack/*.cpp when compiled on Linux
+  - S6522789: [zh_CN] translation of "enclosing class" in doclet is incorrect
+  - S6579775: l10n update after 6212566
+  - S6600143: Remove another 450 unnecessary casts
+  - S6611629: Avoid hardcoded cygwin paths for memory detection
+  - S6690018: RSAClientKeyExchange NullPointerException
+  - S6714842: CertPathBuilder returns incorrect CertPath for BasicConstraints in builderParams
+  - S6726309: Compiler warnings in nio code
+  - S6727683: Cleanup use of COMPILER_WARNINGS_FATAL in makefiles
+  - S6755847: (launcher) will trigger assertions in debug build
+  - S6864028: Update the java launcher to use the new entry point JVM_FindClassFromBootLoader
+  - S6875904: Java 7 message synchronization 1
+  - S6882437: CertPath/X509CertPathDiscovery/Test fails on jdk7/pit/b62
+  - S6888127: java.util.jar.Pack200.Packer Memory Leak
+  - S6888925: SunMSCAPI's Cipher can't use RSA public keys obtained from other sources.
+  - S6889552: Sun provider should not require LDAP CertStore to be present
+  - S6951599: Rename package of security tools for modularization
+  - S6953295: Move few sun.security.{util, x509, pkcs} classes used by keytool/jarsigner to another package
+  - S6958026: Problem with PKCS12 keystore
+  - S6990106: FindBugs scan - Malicious code vulnerability Warnings in com.sun.java.util.jar.pack.*
+  - S6994413: JDK_GetVersionInfo0 only expects a two digit build number
+  - S7000752: Duplicate entry in RowSetResourceBundles.properties
+  - S7001094: Can't initialize SunPKCS11 more times than PKCS11 driver maxSessionCount
+  - S7003227: (pack200) intermittent failures compiling pack200
+  - S7004706: l10n of 7000752 Duplicate entry in RowSetResourceBundles.properties
+  - S7006704: (pack200) add missing file for 6990106
+  - S7011497: Improve trust anchor searching method during cert path validation
+  - S7017734: jdk7 message drop 1 translation integration
+  - S7023416: (pack200) fix parfait issues
+  - S7029680: fix test/sun/misc/Version/Version.java build parsing
+  - S7038175: Expired PKITS certificates causing CertPathBuilder and CertPathValidator regression test failures
+  - S7055363: jdk_security3 test target cleanup
+  - S7060849: Eliminate pack200 build warnings
+  - S7064075: Security libraries don't build with javac -Xlint:all,-deprecation -Werror
+  - S7081817: test/sun/security/provider/certpath/X509CertPath/IllegalCertiticates.java failing
+  - S7092825: javax.crypto.Cipher.Transform.patternCache is synchronizedMap and became scalability bottleneck.
+  - S7105780: Add SSLSocket client/SSLEngine server to templates directory
+  - S7107613: scalability blocker in javax.crypto.CryptoPermissions
+  - S7107616: scalability blocker in javax.crypto.JceSecurityManager
+  - S7109274: Restrict the use of certificates with RSA keys less than 1024 bits
+  - S7129083: CookieManager does not store cookies if url is read before setting cookie manager
+  - S7152582: PKCS11 tests should use the NSS libraries available in the OS
+  - S7166955: (pack200) JNI_GetCreatedJavaVMs needs additional checking
+  - S7196855: autotest.sh fails on ubuntu because libsoftokn.so not found
+  - S7200682: TEST_BUG: keytool/autotest.sh still has problems with libsoftokn.so
+  - S8002306: (se) Selector.open fails if invoked with thread interrupt status set [win]
+  - S8009634: TEST_BUG: sun/misc/Version/Version.java handle 2 digit minor in VM version
+  - S8010166: TEST_BUG: fix for 8009634 overlooks possible version strings (sun/misc/Version/Version.java)
+  - S8013228: Create new system properties to control allowable OCSP clock skew and CRL connection timeout
+  - S8019341: Update CookieHttpsClientTest to use the newer framework.
+  - S8022228: Intermittent test failures in sun/security/ssl/javax/net/ssl/NewAPIs
+  - S8022594: Potential deadlock in <clinit> of sun.nio.ch.Util/IOUtil
+  - S8023546: sun/security/mscapi/ShortRSAKey1024.sh fails intermittently
+  - S8026794: Test tools/pack200/TimeStamp.java fails while opening golden.jar.native.IST on linux-ppc(v2)
+  - S8027026: Change keytool -genkeypair to use -keyalg RSA
+  - S8029177: [Parfait] warnings from b117 for jdk.src.share.native.com.sun.java.util.jar: JNI exception pending
+  - S8029646: [pack200] should support the new zip64 format.
+  - S8036612: [parfait] JNI exception pending in jdk/src/windows/native/sun/security/mscapi/security.cpp
+  - S8037557: test SessionCacheSizeTests.java timeout
+  - S8074839: Resolve disabled warnings for libunpack and the unpack200 binary
+  - S8079410: Hotspot version to share the same update and build version from JDK
+  - S8130735: javax.swing.TimerQueue: timer fires late when another timer starts
+  - S8139436: sun.security.mscapi.KeyStore might load incomplete data
+  - S8140344: add support for 3 digit update release numbers
+  - S8144313: Test SessionTimeOutTests can be timeout
+  - S8145017: Add support for 3 digit hotspot minor version numbers
+  - S8146387: Test SSLSession/SessionCacheSizeTests socket accept timed out
+  - S8146669: Test SessionTimeOutTests fails intermittently
+  - S8146993: Several javax/management/remote/mandatory regression tests fail after JDK-8138811
+  - S8147857: [TEST] RMIConnector logs attribute names incorrectly
+  - S8151841, PR3099: Build needs additional flags to compile with GCC 6
+  - S8151876: (tz) Support tzdata2016d
+  - S8161262: Fix jdk build with gcc 4.1.2: -fno-strict-overflow not known.
+  - S8162344: The API changes made by CR 7064075 need to be reverted
+  - S8162818: Sync src/share/native/com/sun/media code with OpenJDK 7
+  - S8162828: Sync imageioJPEG.c with initial OpenJDK 7 version
+  - S8163022, PR2954: Remove @Override annotation on interfaces added by 2016/04 security fixes
+  - S8164181: Remove @Override annotation on interfaces added by 2016/07 security fixes
+* Backports
+  - S2178143, PR2959: JVM crashes if the number of bound CPUs changed during runtime
+  - S6260348, PR3068: GTK+ L&F JTextComponent not respecting desktop caret blink rate
+  - S6961123, PR2975: setWMClass fails to null-terminate WM_CLASS string
+  - S7050826, PR2956, RH1334465: Hebrew characters are not rendered on OEL 5.6
+* Bug fixes
+  - PR2800: Files are missing from resources.jar
+  - PR2954: ecj/override.patch is missing new @Overrides in RMIJRMPServerImpl.java
+  - PR2961: Latest security update broke bundled LCMS2 build
+  - PR2962: System default check doesn't match all GNU/Linux systems
+  - PR2969: ENABLE_SYSTEM_LCMS is not defined if ENABLE_LCMS2 is not set
+  - PR3092: SystemTap is heavily confused by multiple JDKs
+  - PR3117: Add tests for Java debug info and source files
+  - PR3129: pax-mark-vm script calls "exit -1" which is invalid in dash
+  - PR3130: Avoid giving PAX_COMMAND a value if no PaX utility is available
+  - PR3132: PaX marking fails on filesystems which don't support extended attributes
+  - PR3137: GTKLookAndFeel does not honor gtk-alternative-button-order
+  - PR3140: Pass $(CC) and $(CXX) to OpenJDK build
+  - PR3142: Don't assume system mime.types supports text/x-java-source
+  - PR3144: Test subdirectory of build tree not emptied
+
 New in release 1.13.11 (2016-05-05):
 
 * Security fixes
@@ -23,7 +135,7 @@ New in release 1.13.11 (2016-05-05):
   - S8144430, CVE-2016-3427: Improve JMX connections
   - S8146494: Better ligature substitution
   - S8146498: Better device table adjustments
-* Import of OpenJDK6 b38
+* Import of OpenJDK6 b39
   - S4459600: java -jar fails to run Main-Class if classname followed by whitespace.
   - S6378099: RFE: Use libfontconfig to create/synthesise a fontconfig.properties
   - S6452854: Provide a flag to print the java configuration

@@ -1,6 +1,6 @@
 diff -Nru openjdk.orig/jdk/make/common/Defs-embedded.gmk openjdk/jdk/make/common/Defs-embedded.gmk
 --- openjdk.orig/jdk/make/common/Defs-embedded.gmk	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/make/common/Defs-embedded.gmk	2013-10-09 11:57:00.416951716 +0100
++++ openjdk/jdk/make/common/Defs-embedded.gmk	2016-08-16 05:13:50.371020643 +0100
 @@ -0,0 +1,53 @@
 +#
 +# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
@@ -56,8 +56,8 @@ diff -Nru openjdk.orig/jdk/make/common/Defs-embedded.gmk openjdk/jdk/make/common
 +endif # JAVASE_EMBEDDED
 +
 diff -Nru openjdk.orig/jdk/make/common/Defs.gmk openjdk/jdk/make/common/Defs.gmk
---- openjdk.orig/jdk/make/common/Defs.gmk	2013-10-09 01:32:58.126292030 +0100
-+++ openjdk/jdk/make/common/Defs.gmk	2013-10-09 12:02:00.033606462 +0100
+--- openjdk.orig/jdk/make/common/Defs.gmk	2016-08-16 05:12:36.908221727 +0100
++++ openjdk/jdk/make/common/Defs.gmk	2016-08-16 05:13:50.371020643 +0100
 @@ -124,6 +124,12 @@
  include $(JDK_TOPDIR)/make/common/Defs-$(PLATFORM).gmk
  
@@ -72,8 +72,8 @@ diff -Nru openjdk.orig/jdk/make/common/Defs.gmk openjdk/jdk/make/common/Defs.gmk
  #
  ifdef OPENJDK
 diff -Nru openjdk.orig/jdk/make/common/Library.gmk openjdk/jdk/make/common/Library.gmk
---- openjdk.orig/jdk/make/common/Library.gmk	2013-10-09 01:32:58.126292030 +0100
-+++ openjdk/jdk/make/common/Library.gmk	2013-10-09 11:57:00.416951716 +0100
+--- openjdk.orig/jdk/make/common/Library.gmk	2016-08-16 03:20:55.641983012 +0100
++++ openjdk/jdk/make/common/Library.gmk	2016-08-16 05:13:50.371020643 +0100
 @@ -1,5 +1,5 @@
  #
 -# Copyright (c) 1995, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -92,7 +92,7 @@ diff -Nru openjdk.orig/jdk/make/common/Library.gmk openjdk/jdk/make/common/Libra
  #   files as quickly as possible.
 diff -Nru openjdk.orig/jdk/make/common/Release-embedded.gmk openjdk/jdk/make/common/Release-embedded.gmk
 --- openjdk.orig/jdk/make/common/Release-embedded.gmk	1970-01-01 01:00:00.000000000 +0100
-+++ openjdk/jdk/make/common/Release-embedded.gmk	2013-10-09 11:57:00.416951716 +0100
++++ openjdk/jdk/make/common/Release-embedded.gmk	2016-08-16 05:13:50.371020643 +0100
 @@ -0,0 +1,232 @@
 +#
 +# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
@@ -327,8 +327,8 @@ diff -Nru openjdk.orig/jdk/make/common/Release-embedded.gmk openjdk/jdk/make/com
 +endif # JAVASE_EMBEDDED
 +
 diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Release.gmk
---- openjdk.orig/jdk/make/common/Release.gmk	2013-10-09 01:32:55.966258542 +0100
-+++ openjdk/jdk/make/common/Release.gmk	2013-10-09 12:01:06.860785412 +0100
+--- openjdk.orig/jdk/make/common/Release.gmk	2016-08-16 05:12:36.912221661 +0100
++++ openjdk/jdk/make/common/Release.gmk	2016-08-16 05:13:50.375020578 +0100
 @@ -1,5 +1,5 @@
  #
 -# Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -336,7 +336,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  #
  # This code is free software; you can redistribute it and/or modify it
-@@ -35,7 +35,7 @@
+@@ -41,7 +41,7 @@
  
  IMAGE_BINDIR = bin
  
@@ -345,7 +345,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  # classes in the com.sun.java.swing.plaf packages, since we've always
  # allowed, and even advocated, extending them (see bug 6476749).
  #
-@@ -221,6 +221,16 @@
+@@ -227,6 +227,16 @@
  fi
  endef
  
@@ -362,7 +362,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  #
  # Targets.
  #
-@@ -652,7 +662,7 @@
+@@ -662,7 +672,7 @@
  	$(SED) -e "s@^@-C $(CLASSBINDIR) @" $< > $@
  $(RESOURCES_JAR): $(RES_JAR_ARGLIST) $(JAR_MANIFEST_FILE)
  	$(prep-target)
@@ -371,7 +371,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  	    @$(RES_JAR_ARGLIST) $(JAR_JFLAGS)
  	@$(java-vm-cleanup)
  
-@@ -660,7 +670,7 @@
+@@ -670,7 +680,7 @@
  JSSE_JAR=$(TEMPDIR)/jsse-orig.jar
  $(JSSE_JAR): $(JAR_MANIFEST_FILE)
  	$(prep-target)
@@ -380,7 +380,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  		$(JSSE_CLASSES_DIRS:%=-C $(CLASSBINDIR) %) \
  		$(JAR_JFLAGS)
  	@$(java-vm-cleanup)
-@@ -711,7 +721,7 @@
+@@ -721,7 +731,7 @@
  	$(SED) -e "s@^@-C $(CLASSBINDIR) @" $< > $@
  $(RT_JAR): $(RT_JAR_ARGLIST) $(JAR_MANIFEST_FILE)
  	$(prep-target)
@@ -389,7 +389,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  	    @$(RT_JAR_ARGLIST) $(JAR_JFLAGS)
  	@$(java-vm-cleanup)
  
-@@ -719,6 +729,10 @@
+@@ -729,6 +739,10 @@
  
  BUILDMETAINDEX_JARFILE = $(ABS_BUILDTOOLJARDIR)/buildmetaindex.jar
  
@@ -400,7 +400,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  ######################################################
  # JRE Image
  ######################################################
-@@ -948,7 +962,7 @@
+@@ -959,7 +973,7 @@
  	@#
  	@# lib/tools.jar
  	@#
@@ -409,7 +409,7 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  		-C $(CLASSBINDIR) , $(TOOLS)) \
  	        $(JAR_JFLAGS)
  	@$(java-vm-cleanup)
-@@ -962,7 +976,7 @@
+@@ -973,7 +987,7 @@
  	    -Acom.sun.tools.javac.sym.Jar=$(RT_JAR) \
  	    -Acom.sun.tools.javac.sym.Dest=$(OUTPUTDIR)/symbols/META-INF/sym/rt.jar \
  	    $(CORE_PKGS) $(NON_CORE_PKGS) $(EXCLUDE_PROPWARN_PKGS)
@@ -419,9 +419,9 @@ diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Relea
  	@$(java-vm-cleanup)
  	$(CP) $(LIBDIR)/ct.sym $(JDK_IMAGE_DIR)/lib/ct.sym
 diff -Nru openjdk.orig/jdk/make/common/shared/Sanity-Settings.gmk openjdk/jdk/make/common/shared/Sanity-Settings.gmk
---- openjdk.orig/jdk/make/common/shared/Sanity-Settings.gmk	2013-10-09 01:32:58.154292464 +0100
-+++ openjdk/jdk/make/common/shared/Sanity-Settings.gmk	2013-10-09 11:57:00.420951778 +0100
-@@ -180,7 +180,9 @@
+--- openjdk.orig/jdk/make/common/shared/Sanity-Settings.gmk	2016-08-16 03:20:55.645982946 +0100
++++ openjdk/jdk/make/common/shared/Sanity-Settings.gmk	2016-08-16 05:13:50.375020578 +0100
+@@ -187,7 +187,9 @@
    endif
  endif
  ifeq ($(PLATFORM),linux)
@@ -433,8 +433,8 @@ diff -Nru openjdk.orig/jdk/make/common/shared/Sanity-Settings.gmk openjdk/jdk/ma
  ALL_SETTINGS+=$(call addRequiredVersionSetting,OS_VERSION)
  ALL_SETTINGS+=$(call addOptionalSetting,OS_VARIANT_NAME)
 diff -Nru openjdk.orig/jdk/make/java/zip/Makefile openjdk/jdk/make/java/zip/Makefile
---- openjdk.orig/jdk/make/java/zip/Makefile	2013-10-09 01:32:53.166215133 +0100
-+++ openjdk/jdk/make/java/zip/Makefile	2013-10-09 11:59:34.411356495 +0100
+--- openjdk.orig/jdk/make/java/zip/Makefile	2016-08-16 03:20:55.649982880 +0100
++++ openjdk/jdk/make/java/zip/Makefile	2016-08-16 05:14:24.234467021 +0100
 @@ -1,5 +1,5 @@
  #
 -# Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
@@ -442,7 +442,7 @@ diff -Nru openjdk.orig/jdk/make/java/zip/Makefile openjdk/jdk/make/java/zip/Make
  # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  #
  # This code is free software; you can redistribute it and/or modify it
-@@ -46,7 +46,10 @@
+@@ -48,7 +48,10 @@
  	java/util/jar/JarFile.java
  
  ifneq ($(PLATFORM), windows)
@@ -451,6 +451,6 @@ diff -Nru openjdk.orig/jdk/make/java/zip/Makefile openjdk/jdk/make/java/zip/Make
 +  ifneq ($(LIBZIP_CAN_USE_MMAP),false)
 +    OTHER_CFLAGS += -DUSE_MMAP
 +  endif
- else
-   # Files built here do not compile with warning level 3 if warnings are fatal
-   COMPILER_WARNINGS_FATAL=false
+ endif
+ 
+ #

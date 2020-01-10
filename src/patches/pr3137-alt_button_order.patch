@@ -1,0 +1,88 @@
+# HG changeset patch
+# User andrew
+# Date 1370445992 -3600
+#      Wed Jun 05 16:26:32 2013 +0100
+# Node ID 083cb3631cb84dd34583d495ed079da16fb1f5be
+# Parent  fdd98e50f1df83d8aead62bb1c74224f2f8c82c7
+PR3137: GTKLookAndFeel does not honor gtk-alternative-button-order
+
+diff --git a/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java b/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java
+--- openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java
++++ openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKEngine.java
+@@ -93,7 +93,8 @@
+      */
+     static enum Settings {
+         GTK_FONT_NAME,
+-        GTK_ICON_SIZES
++        GTK_ICON_SIZES,
++	GTK_BUTTON_ORDER
+     }
+ 
+     /* Custom regions are needed for representing regions that don't exist
+diff --git a/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java b/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java
+--- openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java
++++ openjdk/jdk/src/share/classes/com/sun/java/swing/plaf/gtk/GTKLookAndFeel.java
+@@ -539,6 +539,14 @@
+             }
+         }
+ 
++	/* If gtk-alternative-button-order is set to true, isYesLast needs to be false */
++	Boolean buttonOrder = Boolean.TRUE;
++	Object orderSetting = GTKEngine.INSTANCE.getSetting(GTKEngine.Settings.GTK_BUTTON_ORDER);
++	if (orderSetting instanceof Boolean) {
++	    Boolean order = (Boolean) orderSetting;
++	    if (Boolean.TRUE.equals(order))
++		buttonOrder = Boolean.FALSE;
++	}
+         Object[] defaults = new Object[] {
+             "ArrowButton.size", Integer.valueOf(13),
+ 
+@@ -818,7 +826,7 @@
+             "OptionPane.windowBindings", new Object[] {
+                 "ESCAPE", "close" },
+             "OptionPane.buttonClickThreshhold", new Integer(500),
+-            "OptionPane.isYesLast", Boolean.TRUE,
++            "OptionPane.isYesLast", buttonOrder,
+             "OptionPane.font", new FontLazyValue(Region.OPTION_PANE),
+ 
+             "Panel.font", new FontLazyValue(Region.PANEL),
+diff --git a/src/solaris/native/sun/awt/gtk2_interface.c b/src/solaris/native/sun/awt/gtk2_interface.c
+--- openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.c
++++ openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.c
+@@ -1817,6 +1817,14 @@
+     return create_Integer(env, intval);
+ }*/
+ 
++jobject get_boolean_property(JNIEnv* env, GtkSettings* settings, const gchar *key)
++{
++    gboolean boolval = NULL;
++
++    (*fp_g_object_get)(settings, key, &boolval, NULL);
++    return create_Boolean(env, (jboolean) boolval);
++}
++
+ jobject gtk2_get_setting(JNIEnv *env, Setting property)
+ {
+     GtkSettings* settings = gtk_settings_get_default ();
+@@ -1827,6 +1835,8 @@
+             return get_string_property(env, settings, "gtk-font-name");
+         case GTK_ICON_SIZES:
+             return get_string_property(env, settings, "gtk-icon-sizes");
++        case GTK_BUTTON_ORDER:
++	    return get_boolean_property(env, settings, "gtk-alternative-button-order");
+     }
+ 
+     return NULL;
+diff --git a/src/solaris/native/sun/awt/gtk2_interface.h b/src/solaris/native/sun/awt/gtk2_interface.h
+--- openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.h
++++ openjdk/jdk/src/solaris/native/sun/awt/gtk2_interface.h
+@@ -130,7 +130,8 @@
+ typedef enum _Setting
+ {
+     GTK_FONT_NAME,
+-    GTK_ICON_SIZES
++    GTK_ICON_SIZES,
++    GTK_BUTTON_ORDER
+ } Setting;
+ 
+ /*

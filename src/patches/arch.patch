@@ -1,6 +1,6 @@
 diff -Nru openjdk.orig/corba/make/common/Defs-linux.gmk openjdk/corba/make/common/Defs-linux.gmk
---- openjdk.orig/corba/make/common/Defs-linux.gmk	2010-05-26 09:31:18.000000000 +0100
-+++ openjdk/corba/make/common/Defs-linux.gmk	2015-03-31 16:43:11.850271287 +0100
+--- openjdk.orig/corba/make/common/Defs-linux.gmk	2016-08-16 02:49:01.293544691 +0100
++++ openjdk/corba/make/common/Defs-linux.gmk	2016-08-16 04:55:35.484931454 +0100
 @@ -92,9 +92,19 @@
  #    We need this frame pointer to make it easy to walk the stacks.
  #    This should be the default on X86, but ia64 and amd64 may not have this
@@ -22,8 +22,8 @@ diff -Nru openjdk.orig/corba/make/common/Defs-linux.gmk openjdk/corba/make/commo
  LDFLAGS_COMMON_sparcv9  += -m64 -mcpu=v9
  CFLAGS_REQUIRED_sparc   += -m32 -mcpu=v9
 diff -Nru openjdk.orig/corba/make/common/shared/Platform.gmk openjdk/corba/make/common/shared/Platform.gmk
---- openjdk.orig/corba/make/common/shared/Platform.gmk	2015-03-31 15:23:48.410803372 +0100
-+++ openjdk/corba/make/common/shared/Platform.gmk	2015-03-31 16:43:11.850271287 +0100
+--- openjdk.orig/corba/make/common/shared/Platform.gmk	2016-08-16 04:54:04.406422421 +0100
++++ openjdk/corba/make/common/shared/Platform.gmk	2016-08-16 04:55:35.484931454 +0100
 @@ -220,9 +220,40 @@
    else
      # i586 is 32-bit, amd64 is 64-bit
@@ -67,9 +67,9 @@ diff -Nru openjdk.orig/corba/make/common/shared/Platform.gmk openjdk/corba/make/
        endif
      endif
 diff -Nru openjdk.orig/jdk/make/common/Defs-linux.gmk openjdk/jdk/make/common/Defs-linux.gmk
---- openjdk.orig/jdk/make/common/Defs-linux.gmk	2015-02-05 18:49:58.372812460 +0000
-+++ openjdk/jdk/make/common/Defs-linux.gmk	2015-03-31 16:45:47.396086418 +0100
-@@ -102,10 +102,19 @@
+--- openjdk.orig/jdk/make/common/Defs-linux.gmk	2016-08-16 03:20:55.637983077 +0100
++++ openjdk/jdk/make/common/Defs-linux.gmk	2016-08-16 04:55:35.484931454 +0100
+@@ -106,10 +106,19 @@
  #    We need this frame pointer to make it easy to walk the stacks.
  #    This should be the default on X86, but ia64 and amd64 may not have this
  #    as the default.
@@ -90,81 +90,10 @@ diff -Nru openjdk.orig/jdk/make/common/Defs-linux.gmk openjdk/jdk/make/common/De
  CFLAGS_REQUIRED_sparcv9 += -m64 -mcpu=v9
  LDFLAGS_COMMON_sparcv9  += -m64 -mcpu=v9
  CFLAGS_REQUIRED_sparc   += -m32 -mcpu=v9
-diff -Nru openjdk.orig/jdk/make/common/shared/Compiler-gcc.gmk openjdk/jdk/make/common/shared/Compiler-gcc.gmk
---- openjdk.orig/jdk/make/common/shared/Compiler-gcc.gmk	2015-03-31 15:23:48.254801559 +0100
-+++ openjdk/jdk/make/common/shared/Compiler-gcc.gmk	2015-03-31 16:51:56.332405289 +0100
-@@ -70,28 +70,56 @@
-   else
-     CXX            = $(COMPILER_PATH)g++$(GCC_SUFFIX)
-   endif
--  ifneq ("$(findstring sparc,$(ARCH))", "")
--    # sparc or sparcv9
--    REQUIRED_CC_VER = 4.0
--    REQUIRED_GCC_VER = 4.0.*
--  else
--  ifeq ($(ARCH_DATA_MODEL), 32)
-+  ifeq ($(ARCH), alpha)
-+    # alpha
-+     REQUIRED_CC_VER = 3.2
-+     REQUIRED_GCC_VER = 3.2.*
-+  endif
-+  ifeq ($(ARCH), amd64)
-+     # amd64
-+     REQUIRED_CC_VER = 3.2
-+     REQUIRED_GCC_VER = 3.2.*
-+  endif
-+  ifeq ($(ARCH), arm)
-+    # arm
-+    REQUIRED_CC_VER = 3.2
-+    REQUIRED_GCC_VER = 3.2.*
-+  endif
-+  ifeq ($(ARCH), i586)
-     # i586
-     REQUIRED_CC_VER = 3.2
-     REQUIRED_GCC_VER = 3.2.1*
-     REQUIRED_GCC_VER_INT = 3.2.1-7a
--  else
--  ifeq ($(ARCH), amd64)
--    # amd64
--    REQUIRED_CC_VER = 3.2
--    REQUIRED_GCC_VER = 3.2.*
-   endif
-   ifeq ($(ARCH), ia64)
-     # ia64
-     REQUIRED_CC_VER = 3.2
-     REQUIRED_GCC_VER = 2.9[56789].*
-   endif
-+  ifneq ("$(findstring m68k,$(ARCH))", "")
-+    # m68k
-+    REQUIRED_CC_VER = 3.2
-+    REQUIRED_GCC_VER = 3.2.*
-+   endif
-+  ifneq ("$(findstring mips,$(ARCH))", "")
-+    # mips
-+    REQUIRED_CC_VER = 3.2
-+    REQUIRED_GCC_VER = 3.2.*
-+  endif
-+  ifneq ("$(findstring ppc,$(ARCH))", "")
-+    # ppc or ppc64
-+    REQUIRED_CC_VER = 3.2
-+    REQUIRED_GCC_VER = 3.2.*
-   endif
-+  ifneq ("$(findstring s390,$(ARCH))", "")
-+    # s390 or s390x
-+    REQUIRED_CC_VER = 3.2
-+    REQUIRED_GCC_VER = 3.2.*
-+  endif
-+  ifneq ("$(findstring sparc,$(ARCH))", "")
-+    # sparc or sparcv9
-+    REQUIRED_CC_VER = 4.0
-+    REQUIRED_GCC_VER = 4.0.*
-   endif
-   # Option used to create a shared library
-   SHARED_LIBRARY_FLAG = -shared
 diff -Nru openjdk.orig/jdk/make/common/shared/Platform.gmk openjdk/jdk/make/common/shared/Platform.gmk
---- openjdk.orig/jdk/make/common/shared/Platform.gmk	2015-03-31 15:23:48.410803372 +0100
-+++ openjdk/jdk/make/common/shared/Platform.gmk	2015-03-31 16:43:11.850271287 +0100
-@@ -222,9 +222,40 @@
+--- openjdk.orig/jdk/make/common/shared/Platform.gmk	2016-08-16 04:54:04.406422421 +0100
++++ openjdk/jdk/make/common/shared/Platform.gmk	2016-08-16 04:55:35.484931454 +0100
+@@ -193,9 +193,40 @@
    else
      # i586 is 32-bit, amd64 is 64-bit
      ifndef ARCH_DATA_MODEL
@@ -207,8 +136,8 @@ diff -Nru openjdk.orig/jdk/make/common/shared/Platform.gmk openjdk/jdk/make/comm
        endif
      endif
 diff -Nru openjdk.orig/jdk/make/javax/sound/SoundDefs.gmk openjdk/jdk/make/javax/sound/SoundDefs.gmk
---- openjdk.orig/jdk/make/javax/sound/SoundDefs.gmk	2013-08-21 20:32:57.524222927 +0100
-+++ openjdk/jdk/make/javax/sound/SoundDefs.gmk	2015-03-31 16:44:39.367291058 +0100
+--- openjdk.orig/jdk/make/javax/sound/SoundDefs.gmk	2016-08-16 02:49:25.677142687 +0100
++++ openjdk/jdk/make/javax/sound/SoundDefs.gmk	2016-08-16 04:55:35.484931454 +0100
 @@ -58,10 +58,54 @@
  ifeq ($(ZERO_BUILD), true)
    CPPFLAGS += -DX_ARCH=X_ZERO
@@ -276,8 +205,8 @@ diff -Nru openjdk.orig/jdk/make/javax/sound/SoundDefs.gmk openjdk/jdk/make/javax
  
  
 diff -Nru openjdk.orig/jdk/src/share/native/com/sun/media/sound/SoundDefs.h openjdk/jdk/src/share/native/com/sun/media/sound/SoundDefs.h
---- openjdk.orig/jdk/src/share/native/com/sun/media/sound/SoundDefs.h	2013-08-21 20:32:57.952229855 +0100
-+++ openjdk/jdk/src/share/native/com/sun/media/sound/SoundDefs.h	2015-03-31 16:43:11.850271287 +0100
+--- openjdk.orig/jdk/src/share/native/com/sun/media/sound/SoundDefs.h	2016-08-16 02:49:38.708927851 +0100
++++ openjdk/jdk/src/share/native/com/sun/media/sound/SoundDefs.h	2016-08-16 04:55:35.484931454 +0100
 @@ -33,12 +33,21 @@
  #define X_LINUX         3
  

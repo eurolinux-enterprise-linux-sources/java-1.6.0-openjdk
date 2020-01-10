@@ -116,7 +116,7 @@ Reviewed-by: prr, vadim
              {
                  if (numBands == 3 && !ccm.hasAlpha()) {
                      imageType = TYPE_3BYTE_BGR;
-@@ -804,6 +801,27 @@
+@@ -804,6 +801,26 @@
          }   // else if ((raster instanceof ByteComponentRaster) &&
      }
  
@@ -129,7 +129,6 @@ Reviewed-by: prr, vadim
 +                new PrivilegedAction<Boolean>()
 +        {
 +
-+            @Override
 +            public Boolean run() {
 +                final ClassLoader std = System.class.getClassLoader();
 +

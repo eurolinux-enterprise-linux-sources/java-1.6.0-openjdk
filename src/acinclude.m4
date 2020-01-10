@@ -1566,10 +1566,17 @@ AC_DEFUN_ONCE([IT_CHECK_FOR_LCMS],
     ENABLE_SYSTEM_LCMS="${enableval}"
   ],
   [
-    if test x"${ENABLE_LCMS2}" = "xyes" -a x"${target_os}" = "xlinux-gnu" ; then
-      ENABLE_SYSTEM_LCMS="yes" ;
+    if test x"${ENABLE_LCMS2}" = "xyes" ; then
+      case "${target_os}" in
+        *linux*)
+          ENABLE_SYSTEM_LCMS="yes"
+	  ;;
+	*)
+          ENABLE_SYSTEM_LCMS="no" ;
+	  ;;
+      esac
     else
-      ENABLE_SYSTEM_LCMS="no" ;
+      ENABLE_SYSTEM_LCMS="no"
     fi;
   ])
   AC_MSG_RESULT(${ENABLE_SYSTEM_LCMS})
@@ -1596,11 +1603,14 @@ AC_DEFUN_ONCE([IT_CHECK_FOR_ZLIB],
     ENABLE_SYSTEM_ZLIB="${enableval}"
   ],
   [
-    if test x"${target_os}" = "xlinux-gnu"; then
-      ENABLE_SYSTEM_ZLIB="yes" ;
-    else
-      ENABLE_SYSTEM_ZLIB="no" ;
-    fi
+    case "${target_os}" in
+      *linux*)
+        ENABLE_SYSTEM_ZLIB="yes"
+	;;
+      *)
+        ENABLE_SYSTEM_ZLIB="no" ;
+	;;
+    esac
   ])
   AC_MSG_RESULT(${ENABLE_SYSTEM_ZLIB})
   if test x"${ENABLE_SYSTEM_ZLIB}" = "xyes"; then
@@ -1627,11 +1637,14 @@ AC_DEFUN_ONCE([IT_CHECK_FOR_JPEG],
     ENABLE_SYSTEM_JPEG="${enableval}"
   ],
   [
-    if test x"${target_os}" = "xlinux-gnu"; then
-      ENABLE_SYSTEM_JPEG="yes" ;
-    else
-      ENABLE_SYSTEM_JPEG="no" ;
-    fi
+    case "${target_os}" in
+      *linux*)
+        ENABLE_SYSTEM_JPEG="yes"
+	;;
+      *)
+        ENABLE_SYSTEM_JPEG="no" ;
+	;;
+    esac
   ])
   AC_MSG_RESULT(${ENABLE_SYSTEM_JPEG})
   if test x"${ENABLE_SYSTEM_JPEG}" = "xyes"; then
@@ -1656,11 +1669,14 @@ AC_DEFUN_ONCE([IT_CHECK_FOR_PNG],
     ENABLE_SYSTEM_PNG="${enableval}"
   ],
   [
-    if test x"${target_os}" = "xlinux-gnu"; then
-      ENABLE_SYSTEM_PNG="yes" ;
-    else
-      ENABLE_SYSTEM_PNG="no" ;
-    fi
+    case "${target_os}" in
+      *linux*)
+        ENABLE_SYSTEM_PNG="yes"
+	;;
+      *)
+        ENABLE_SYSTEM_PNG="no" ;
+	;;
+    esac
   ])
   AC_MSG_RESULT(${ENABLE_SYSTEM_PNG})
   if test x"${ENABLE_SYSTEM_PNG}" = "xyes"; then
@@ -1686,11 +1702,14 @@ AC_DEFUN_ONCE([IT_CHECK_FOR_GIF],
     ENABLE_SYSTEM_GIF="${enableval}"
   ],
   [
-    if test x"${target_os}" = "xlinux-gnu"; then
-      ENABLE_SYSTEM_GIF="yes" ;
-    else
-      ENABLE_SYSTEM_GIF="no" ;
-    fi
+    case "${target_os}" in
+      *linux*)
+        ENABLE_SYSTEM_GIF="yes"
+	;;
+      *)
+        ENABLE_SYSTEM_GIF="no" ;
+	;;
+    esac
   ])
   AC_MSG_RESULT(${ENABLE_SYSTEM_GIF})
   if test x"${ENABLE_SYSTEM_GIF}" = "xyes"; then
@@ -2220,10 +2239,7 @@ AC_DEFUN_ONCE([IT_WITH_PAX],
       AC_MSG_WARN("No PaX utility found.")
     fi
   fi
-  if test -z "${PAX_COMMAND}"; then
-    PAX_COMMAND="not specified"
-    PAX_COMMAND_ARGS="not specified"
-  else
+  if test -n "${PAX_COMMAND}"; then
     AC_MSG_CHECKING([which options to pass to ${PAX_COMMAND}])
     case "${host_cpu}" in
       i?86)
@@ -2235,7 +2251,7 @@ AC_DEFUN_ONCE([IT_WITH_PAX],
     esac
     AC_MSG_RESULT(${PAX_COMMAND_ARGS})
   fi
-  AM_CONDITIONAL(WITH_PAX, test "x${PAX_COMMAND}" != "xnot specified")
+  AM_CONDITIONAL(WITH_PAX, test "x${PAX_COMMAND}" != "x")
   AC_SUBST(PAX_COMMAND)
   AC_SUBST(PAX_COMMAND_ARGS)
 ])
@@ -2409,6 +2425,32 @@ AC_DEFUN_ONCE([IT_ENABLE_NON_NSS_CURVES],
   AC_MSG_RESULT(${ENABLE_NON_NSS_CURVES})
   AM_CONDITIONAL(USE_NON_NSS_CURVES, test x"${ENABLE_NON_NSS_CURVES}" = "xyes")
   AC_SUBST(ENABLE_NON_NSS_CURVES)
+])
+
+AC_DEFUN_ONCE([IT_CHECK_FOR_MIME_TYPES],
+[
+  MIME_TYPES_FILE="/etc/mime.types"
+  AC_MSG_CHECKING([for ${MIME_TYPES_FILE}])
+  if test -f ${MIME_TYPES_FILE}; then
+     mime_types_file_found=yes
+  else
+     mime_types_file_found=no
+  fi
+  AC_MSG_RESULT([$mime_types_file_found])
+  if test "x${mime_types_file_found}" = "xyes"; then
+    AC_MSG_CHECKING([if ${MIME_TYPES_FILE} has text/x-java-source])
+    if grep '^text/x-java-source' ${MIME_TYPES_FILE} >&AS_MESSAGE_LOG_FD ; then
+      java_source_supported=yes
+    else
+      java_source_supported=no
+    fi
+    AC_MSG_RESULT([$java_source_supported])
+  else
+    AC_MSG_WARN([No system MIME types file found.])
+  fi
+  AC_SUBST([MIME_TYPES_FILE])
+  AM_CONDITIONAL(MIME_TYPES_FILE_FOUND, test "x${mime_types_file_found}" = "xyes")
+  AM_CONDITIONAL(JAVA_SOURCE_SUPPORTED, test "x${java_source_supported}" = "xyes")    
 ])
 
 AC_DEFUN_ONCE([IT_WITH_FONTS_DIR],

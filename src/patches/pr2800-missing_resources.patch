@@ -1,0 +1,87 @@
+# HG changeset patch
+# User andrew
+# Date 1468897960 -3600
+#      Tue Jul 19 04:12:40 2016 +0100
+# Node ID 43efac8a0030e2bb6b4c9a7ecb16c695b9794c69
+# Parent  322e1901d8ba95f031b1a82fd51c0ae279e1a8bc
+PR2800: Files are missing from resources.jar
+Summary: Compile and filter list of files from IMPORTSRCDIR and add to resources.jar
+
+diff -Nru openjdk.orig/jdk/make/common/Release.gmk openjdk/jdk/make/common/Release.gmk
+--- openjdk.orig/jdk/make/common/Release.gmk	2016-08-15 00:13:41.073898470 +0100
++++ openjdk/jdk/make/common/Release.gmk	2016-08-15 00:23:17.156538545 +0100
+@@ -232,9 +232,11 @@
+ ifndef COMPRESS_JARS
+   CREATE_JAR_OPTS = c0mf
+   CREATE_JAR_OPTS_NOMANIFEST = c0f
++  UPDATE_JAR_OPTS = u0f
+ else
+   CREATE_JAR_OPTS = cmf
+   CREATE_JAR_OPTS_NOMANIFEST = cf
++  UPDATE_JAR_OPTS = uf
+ endif
+ 
+ #
+@@ -618,6 +620,21 @@
+ 	$(ECHO) "sun/tools/jinfo/" >> $@
+ 	$(ECHO) "sun/tools/jmap/" >> $@
+ 
++######################################################
++# List of directories in impsrc directory that should NOT be in resources.jar
++######################################################
++
++NOT_RESOURCE_JAR_LIST = $(ABS_TEMPDIR)/not_resource_jar.list
++
++$(NOT_RESOURCE_JAR_LIST): FRC
++	$(prep-target)
++	$(ECHO) "#\n" >> $@
++	$(ECHO) "# List of subdirectories not to include in resources.jar" >> $@
++	$(ECHO) "# Directories must contain trailing '/'." >> $@
++	$(ECHO) "com/" >> $@
++	$(ECHO) "javax/" >> $@
++	$(ECHO) "org/" >> $@
++	$(ECHO) "sun/" >> $@
+ 
+ # File order list for rt.jar
+ #     - sun.applet is included, till hotjava stops relying on it.
+@@ -629,6 +646,7 @@
+ JARFILELISTS_TEMPDIR=$(ABS_TEMPDIR)/jarfilelists
+ RT_JAR_FILELIST=$(JARFILELISTS_TEMPDIR)/rt_jar_list
+ RES_JAR_FILELIST=$(JARFILELISTS_TEMPDIR)/resources_jar_list
++IMPORT_JAR_FILELIST=$(JARFILELISTS_TEMPDIR)/imp_file_list
+ 
+ JARREORDER_JARFILE = $(ABS_BUILDTOOLJARDIR)/jarreorder.jar
+ 
+@@ -641,6 +659,15 @@
+ 	$(MV) $@.temp $@
+ 	@($(CD) $(CLASSBINDIR) && $(java-vm-cleanup))
+ 
++$(IMPORT_JAR_FILELIST): $(JARREORDER_JARFILE) $(NOT_RESOURCE_JAR_LIST)
++	$(prep-target)
++	$(RM) $@.temp
++	($(CD) $(IMPORTSRCDIR) && \
++	    $(BOOT_JAVA_CMD) -jar $(JARREORDER_JARFILE) \
++		-o  $@.temp - $(NOT_RESOURCE_JAR_LIST) . )
++	$(MV) $@.temp $@
++	@($(CD) $(IMPORTSRCDIR) && $(java-vm-cleanup))
++
+ # Create the rt.jar file list & non-class files list
+ 
+ JARSPLIT_JARFILE = $(BUILDTOOLJARDIR)/jarsplit.jar
+@@ -670,11 +697,15 @@
+ $(RES_JAR_ARGLIST): $(RES_JAR_FILELIST)
+ 	$(prep-target)
+ 	$(SED) -e "s@^@-C $(CLASSBINDIR) @" $< > $@
+-$(RESOURCES_JAR): $(RES_JAR_ARGLIST) $(JAR_MANIFEST_FILE)
++$(RESOURCES_JAR): $(RES_JAR_ARGLIST) $(JAR_MANIFEST_FILE) $(IMPORT_JAR_FILELIST)
+ 	$(prep-target)
+ 	$(BOOT_JAR_CMD) $(CREATE_JAR_OPTS) $(JAR_MANIFEST_FILE) $@ \
+ 	    @$(RES_JAR_ARGLIST) $(JAR_JFLAGS)
++	$(CD) $(IMPORTSRCDIR) && \
++	    $(BOOT_JAR_CMD) $(UPDATE_JAR_OPTS) $@ \
++	        @$(IMPORT_JAR_FILELIST) $(JAR_JFLAGS)
+ 	@$(java-vm-cleanup)
++	@$(CD) $(IMPORTSRCDIR) && $(java-vm-cleanup)
+ 
+ # Create jsse.jar containing SunJSSE implementation classes
+ JSSE_JAR=$(TEMPDIR)/jsse-orig.jar
