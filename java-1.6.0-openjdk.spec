@@ -94,8 +94,7 @@
 %define bootstrapopt %{nil}
 %else
 %define stapopt %{nil}
-#%%define bootstrapopt --disable-bootstrap
-%define bootstrapopt %{nil}
+%define bootstrapopt --disable-bootstrap
 %endif
 
 # Convert an absolute path to a relative path.  Each symbolic link is
@@ -159,7 +158,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{buildver}
-Release: %{icedteaver}.5%{?dist}
+Release: %{icedteaver}.9%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -201,7 +200,10 @@ Patch6:   %{name}-debuginfo.patch
 Patch7:  no_pr2125.patch
 # This is a RHEL-specific patch to embed RHEL-specific paths
 Patch10:  add-final-location-rpaths.patch
-
+# PR2808, RH1302383: Backport "8076221: Disable RC4 cipher suites"
+Patch12: pr2808.patch
+# PR2849: wget not required when downloading is disabled
+Patch13: pr2849.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -220,19 +222,17 @@ BuildRequires: libXt-devel
 BuildRequires: libXtst-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
-BuildRequires: wget
-BuildRequires: xalan-j2
-BuildRequires: xerces-j2
 BuildRequires: xorg-x11-proto-devel
-BuildRequires: mercurial
 BuildRequires: ant
 BuildRequires: libXinerama-devel
 BuildRequires: rhino
-BuildRequires: redhat-lsb
+# Provides lsb_release for generating identification
+BuildRequires: redhat-lsb-core
 %if %{gcjbootstrap}
 BuildRequires: java-1.5.0-gcj-devel
+BuildRequires: libxslt
 %else
-BuildRequires: java6-1.6.0-devel
+BuildRequires: java-1.6.0-openjdk-devel >= 1.6.0.40
 %endif
 # Java Access Bridge for GNOME build requirements.
 BuildRequires: at-spi-devel
@@ -366,6 +366,8 @@ The OpenJDK API documentation.
 %patch0
 %patch7 -p1
 %patch10 -p1
+%patch12 -p1
+%patch13 -p1
 
 cp %{SOURCE4} .
 
@@ -383,13 +385,16 @@ export ARCH_DATA_MODEL=64
 export CFLAGS="$CFLAGS -mieee"
 %endif
 ./autogen.sh
-%configure %{icedteaopt} %{bootstrapopt} %{stapopt} --with-openjdk-src-zip=%{SOURCE1} \
+%configure %{bootstrapopt} --prefix=%{_jvmdir}/%{sdkdir} --exec-prefix=%{_jvmdir}/%{sdkdir} \
+  --bindir=%{_jvmdir}/%{sdkdir}/bin --includedir=%{_jvmdir}/%{sdkdir}/include \
+  --docdir=%{_defaultdocdir}/%{name} --mandir=%{_jvmdir}/%{sdkdir}/man \
+  --htmldir=%{_javadocdir}/%{name} %{icedteaopt} %{stapopt} --with-openjdk-src-zip=%{SOURCE1} \
   --with-pkgversion=rhel-%{release}-%{_arch} --enable-pulse-java \
-  --with-abs-install-dir=%{_jvmdir}/%{sdkdir} \
+  --with-abs-install-dir=%{_jvmdir}/%{sdkdir} --disable-downloading \
   --with-rhino --with-parallel-jobs=$NUM_PROC --disable-lcms2 \
   --disable-tests --disable-systemtap-tests
 
-make DISTRIBUTION_PATCHES=patches/add-final-location-rpaths.patch patch
+make DISTRIBUTION_PATCHES="patches/add-final-location-rpaths.patch patches/openjdk/8076221-pr2808-disable_rc4_cipher_suites.patch patches/openjdk/8078823-disabledalgorithms_fails_intermittently.patch patches/pr2808-fix_disabled_algorithms_test.patch" patch
 
 patch -l -p0 < %{PATCH3}
 patch -l -p0 < %{PATCH4}
@@ -893,29 +898,45 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
-* Mon Aug 22 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.5
+* Mon Sep 05 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.9
+- Require a JDK with RH1334465/PR2956 fixed and turn off bootstrapping for Zero architectures.
+- Resolves: rhbz#1350047
+
+* Thu Sep 01 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.8
+- Set install directories in configure so that @prefix@ is substituted correctly in tapset
+- Resolves: rhbz#1350047
+
+* Mon Aug 22 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.7
 - Bump source tarballs to try and really fix TCK failures this time.
-- Resolves: rhbz#1350046
+- Resolves: rhbz#1350047
 
-* Mon Aug 22 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.4
+* Mon Aug 22 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.6
 - Bump source tarballs to missing -DNDEBUG on JDK native code.
-- Resolves: rhbz#1350046
+- Resolves: rhbz#1350047
 
-* Fri Aug 19 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.3
+* Fri Aug 19 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.5
 - Non-JIT architectures have not been bootstrapping, due to RPM reading commented macros
-- Resolves: rhbz#1350046
+- Resolves: rhbz#1350047
 
-* Fri Aug 19 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.2
+* Fri Aug 19 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.4
 - Bump source tarballs to fix TCK failures.
-- Resolves: rhbz#1350046
+- Resolves: rhbz#1350047
 
-* Thu Aug 18 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.1
+* Thu Aug 18 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.3
 - Separate bootstrap option as it should not be tied to the JDK used.
 - Enable bootstrapping on JIT architectures going forward.
 - Temporarily enable bootstrapping on all architectures to work around RH1334465/PR2956.
-- Resolves: rhbz#1350046
+- Resolves: rhbz#1350047
 
-* Wed Aug 17 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.0
+* Wed Aug 17 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.2
+- Require mailcap at build time as well, so configure finds /etc/mime.types
+- Resolves: rhbz#1350047
+
+* Wed Aug 17 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.1
+- Add RHEL version of b40 tarball.
+- Resolves: rhbz#1350047
+
+* Wed Aug 17 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.40-1.13.12.1
 - Update to IcedTea 1.13.12 & OpenJDK 6 b40.
 - Separate SystemTap option from bootstrap options.
 - Depend on mailcap for /etc/mime.types (PR2800)
@@ -923,17 +944,24 @@ exit 0
 - Remove redundant patch-ecj target invocation for bootstrap build.
 - Add check section to run the new tests introduced in 1.13.12.
 - Fix context for rpath patch following PR3140.
-- Add RHEL version of b40 tarball.
-- Require mailcap at build time as well, so configure finds /etc/mime.types
-- Resolves: rhbz#1350046
+- Resolves: rhbz#1350047
 
-* Wed May 04 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.39-1.13.11.0
+* Wed May 04 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.39-1.13.11.1
 - Update to IcedTea 1.13.11 & OpenJDK 6 b39.
-- Resolves: rhbz#1325432
+- Resolves: rhbz#1325433
 
-* Thu Jan 21 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.0
+* Mon Feb 15 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.3
+- Remove dependencies no longer needed by modern IcedTea 1.x and current RPM build.
+- Explicitly disable downloading, removing the need for wget.
+- Resolves: rhbz#1308687
+
+* Mon Jan 25 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.2
+- Disable RC4 by default.
+- Resolves: rhbz#1302383
+
+* Thu Jan 21 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.1
 - Update to IcedTea 1.13.10 & OpenJDK 6 b38.
-- Resolves: rhbz#1295775
+- Resolves: rhbz#1295776
 
 * Wed Nov 11 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.37-1.13.9.5
 - Update with new IcedTea & b37 tarballs, including fix for appletviewer regression.
