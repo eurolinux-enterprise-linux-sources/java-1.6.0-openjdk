@@ -7,10 +7,10 @@
 %define debug 0
 
 
-%define icedteaver 1.13.10
+%define icedteaver 1.13.11
 %define icedteasnapshot %{nil}
-%define openjdkver 38
-%define openjdkdate 20_jan_2016
+%define openjdkver 39
+%define openjdkdate 03_may_2016
 
 %define genurl http://cvs.fedoraproject.org/viewcvs/devel/java-1.6.0-openjdk/
 
@@ -885,6 +885,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Wed May 04 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.39-1.13.11.0
+- Update to IcedTea 1.13.11 & OpenJDK 6 b39.
+- Resolves: rhbz#1325432
+
 * Thu Jan 21 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:1.6.0.38-1.13.10.0
 - Update to IcedTea 1.13.10 & OpenJDK 6 b38.
 - Resolves: rhbz#1295775

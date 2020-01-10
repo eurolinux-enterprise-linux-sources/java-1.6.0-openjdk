@@ -1,3 +1,128 @@
+2016-05-03  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	PR2953: make dist fails after PR2887 made
+	jstaptest.pl auto-generated
+	* Makefile.am:
+	(TAPSET_TEST_SRCS): Remove jstaptest.pl which
+	is now auto-generated and handled by autotools.
+	* NEWS: Updated.
+
+2016-05-03  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* NEWS: Set provisional release date of the 5th.
+	* configure.ac: Bump to 1.13.11.
+
+2016-05-03  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* Makefile.am:
+	(OPENJDK_DATE): Bump to b39 creation date;
+	3rd of May, 2016.
+	(OPENJDK_SHA256SUM): Update for b39 tarball.
+
+2016-05-03  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	* patches/openjdk/8039921-sha1_1024plus.patch:
+	Remove further b39 patch missed in earlier batch.
+
+2016-05-03  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	* patches/openjdk/4963723-implement_sha-224.patch,
+	* patches/openjdk/6578658-sunmscapi_nonewithrsa.patch,
+	* patches/openjdk/6753664-sunmscapi_sha-256.patch,
+	* patches/openjdk/6956398-ephemeraldhkeysize.patch,
+	* patches/openjdk/7033170-getmaxallowedkeylength_throws_exception.patch,
+	* patches/openjdk/7044060-support_nsa_suite_b.patch,
+	* patches/openjdk/7106773-512_bits_rsa.patch,
+	* patches/openjdk/8006935-long_keys_in_hmac_prf.patch,
+	* patches/openjdk/8087120-zero_gcc5.patch,
+	* patches/openjdk/p11cipher-6414899-p11digest_should_support_cloning.patch,
+	* patches/openjdk/p11cipher-6604496-support_ckm_aes_ctr.patch,
+	* patches/openjdk/p11cipher-6812738-native_cleanup.patch,
+	* patches/openjdk/p11cipher-6924489-ckr_operation_not_initialized.patch,
+	* patches/pr2486-768_dh.patch,
+	* patches/pr2488-1024_dh.patch:
+	Remove patches upstreamed in b39.
+	* Makefile.am:
+	(ICEDTEA_PATCHES): Remove above patches.
+	* NEWS: Updated.
+	* patches/openjdk/7170638-systemtap.patch:
+	Regenerated due to copyright header change in jni.cpp.
+
+2016-05-03  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* patches/hotspot/hs23/zero_fixes.patch:
+	Remove fragments upstreamed in 8155261.
+	* patches/hotspot/hs23/zero_hs22.patch:
+	Likewise.
+
+2016-01-29  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* Makefile.am:
+	(OPENJDK_VERSION): Bump to next release, b39.
+
+2016-05-03  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR2887: Location of 'stap' executable is hard-coded
+	* configure.ac:
+	Remove SDT_H_FOUND conditional around perl and stap
+	tests as, in 1.x, we still have --enable-systemtap
+	and fail if sdt.h is not found.
+
+2016-03-18  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR2887: Location of 'stap' executable is hard-coded
+	* Makefile.am:
+	(check-tapset-probes): Check for STAP and invoke
+	generated script from build directory.
+	(check-tapset-jstack): Likewise.
+	* NEWS: Updated.
+	* configure.ac: Detect stap and warn if not found.
+	Generate test/tapset/jstaptest.pl.
+	* test/tapset/jstaptest.pl.in:
+	Moved from test/tapset/jstaptest.pl. Fill in location
+	of stap and perl binaries from configure output.
+	Fix capitalisation of "IcedTea".
+
+2016-01-29  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	PR2952: test/tapset/jstaptest.pl requires Perl
+	* Makefile.am:
+	(check-tapset-probes): Check that Perl is available
+	and, if so, use it to invoke the script.
+	(check-tapset-jstack): Likewise.
+	* NEWS: Updated.
+	* configure.ac:
+	Check for Perl if SystemTap is found, so the
+	tests can be run if required.
+
+2016-05-03  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	* Makefile.am:
+	(ICEDTEA_PATCHES): Add new patches.
+	* NEWS: Updated.
+	* patches/openjdk/6307603-xrender-01.patch:
+	Regenerated after application of 8150954 / PR2868.
+	* patches/openjdk/6863746-pr2951-no_ct.sym_in_javap.patch,
+	* patches/openjdk/8071705-pr2820-menu_misbehaviour.patch,
+	* patches/openjdk/8150954-pr2868-composite_desktop.patch,
+	* patches/pr2890-system_cacerts.patch:
+	New backports for issues to be fixed in 1.13.11.
+
+2016-03-24  Andrew John Hughes  <gnu.andrew@member.fsf.org>
+
+	S8150954, PR2868, RH1176206: AWT Robot not
+	compatible with GNOME Shell
+	* INSTALL: Update X11 dependency documentation.
+	* configure.ac: Add check
+	for libXcomposite as required by fix
+	for PR2868. Correct variables used by
+	xproto check.
+
+2016-01-25  Andrew John Hughes  <gnu.andrew@redhat.com>
+
+	* NEWS: Add 1.13.11 section.
+	* configure.ac: Bump to 1.13.11pre.
+
 2016-01-20  Andrew John Hughes  <gnu.andrew@redhat.com>
 
 	* NEWS: Set release date to this Friday.

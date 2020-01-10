@@ -1,4 +1,4 @@
-AC_INIT([icedtea6],[1.13.10],[distro-pkg-dev@openjdk.java.net])
+AC_INIT([icedtea6],[1.13.11],[distro-pkg-dev@openjdk.java.net])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([1.9 tar-pax foreign])
@@ -327,8 +327,8 @@ then
   AC_MSG_ERROR([Could not find Xproto headers - \
   Try installing xorg-x11-proto-devel.])
 fi
-AC_SUBST(XT_CFLAGS)
-AC_SUBST(XT_LIBS)
+AC_SUBST(XPROTO_CFLAGS)
+AC_SUBST(XPROTO_LIBS)
 
 dnl Check for libXt headers and libraries.
 PKG_CHECK_MODULES(XT, xt,[XT_FOUND=yes],[XT_FOUND=no])
@@ -360,6 +360,13 @@ then
 fi
 AC_SUBST(XINERAMA_CFLAGS)
 AC_SUBST(XINERAMA_LIBS)
+
+PKG_CHECK_MODULES(XCOMPOSITE, xcomposite, [XCOMPOSITE_FOUND=yes], [XCOMPOSITE_FOUND=no])
+if test "x${XCOMPOSITE_FOUND}" = xno
+then AC_MSG_ERROR([Could not find Xcomposite extension.  Try installing libXcomposite-devel.])
+fi
+AC_SUBST(XCOMPOSITE_CFLAGS)
+AC_SUBST(XCOMPOSITE_LIBS)
 
 if test "x${ENABLE_XRENDER}" = "xyes"
 then
@@ -427,6 +434,17 @@ public:
 ]])], [AC_MSG_RESULT([yes])], [AC_MSG_ERROR([systemtap sdt.h or g++ too old])])
   AC_LANG_POP([C++])
 
+  AC_PATH_TOOL([PERL],[perl])
+  if test x"${PERL}" = x ; then
+    AC_MSG_WARN([Perl not found in PATH; SystemTap tests will not be able to run])
+  fi
+  AC_SUBST(PERL)
+  AC_PATH_TOOL([STAP],[stap])
+  if test x"${STAP}" = x ; then
+    AC_MSG_WARN([stap not found in PATH; SystemTap tests will not be able to run])
+  fi
+  AC_SUBST(STAP)
+
   ABS_CLIENT_LIBJVM_SO="${ABS_JAVA_HOME_DIR}/jre/lib/${INSTALL_ARCH_DIR}/client/libjvm.so"
   ABS_SERVER_LIBJVM_SO="${ABS_JAVA_HOME_DIR}/jre/lib/${INSTALL_ARCH_DIR}/server/libjvm.so"
   AC_SUBST(ABS_CLIENT_LIBJVM_SO)
@@ -435,6 +453,7 @@ public:
   AC_CONFIG_FILES([tapset/hotspot_jni.stp])
   AC_CONFIG_FILES([tapset/jstack.stp])
   AC_CONFIG_FILES([tapset/hotspot_gc.stp])
+  AC_CONFIG_FILES([test/tapset/jstaptest.pl])
 fi
 
 dnl Check for libXtst headers and libraries.
